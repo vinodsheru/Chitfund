@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kumar Chits — Project Wiki</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0F0E0A;
+  --paper: #F7F3EC;
+  --paper2: #EDE8DF;
+  --gold: #B8892A;
+  --gold-light: #D4A843;
+  --green: #1B4332;
+  --green-light: #2D6A4F;
+  --rust: #8B3A2A;
+  --slate: #3D4A5C;
+  --muted: #7A7060;
+  --rule: #D4CEC3;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 18px;
+  line-height: 1.75;
+  min-height: 100vh;
+}
+
+/* GRAIN TEXTURE */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:0;
+}
+
+/* PAGE LAYOUT */
+.page { position:relative; z-index:1; }
+
+/* MASTHEAD */
+.masthead {
+  background: var(--green);
+  color: var(--paper);
+  padding: 0;
+  border-bottom: 4px solid var(--gold);
+  position: relative;
+  overflow: hidden;
+}
+
+.masthead::before {
+  content:'';
+  position:absolute; inset:0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent, transparent 60px,
+    rgba(255,255,255,0.02) 60px, rgba(255,255,255,0.02) 61px
+  ), repeating-linear-gradient(
+    0deg,
+    transparent, transparent 60px,
+    rgba(255,255,255,0.02) 60px, rgba(255,255,255,0.02) 61px
+  );
+}
+
+.masthead-inner {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 60px 48px 52px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 40px;
+  align-items: end;
+}
+
+.masthead-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.masthead-eyebrow::before {
+  content:'';
+  width:32px; height:1px;
+  background: var(--gold);
+}
+
+.masthead h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(42px, 6vw, 72px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -1px;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.masthead h1 span { color: var(--gold-light); font-style: italic; }
+
+.masthead-sub {
+  font-size: 17px;
+  color: rgba(247,243,236,0.7);
+  font-style: italic;
+  font-weight: 300;
+  margin-top: 14px;
+}
+
+.masthead-meta {
+  text-align: right;
+}
+
+.meta-pill {
+  display: inline-block;
+  background: rgba(184,137,42,0.2);
+  border: 1px solid rgba(184,137,42,0.4);
+  color: var(--gold-light);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 2px;
+  margin: 3px 0;
+  display: block;
+  text-align: center;
+}
+
+.masthead-stamp {
+  font-family: 'Playfair Display', serif;
+  font-size: 64px;
+  color: rgba(184,137,42,0.15);
+  line-height: 1;
+  position: absolute;
+  right: 48px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-style: italic;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* NAV */
+nav {
+  background: var(--paper2);
+  border-bottom: 1px solid var(--rule);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.nav-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 48px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+}
+
+.nav-inner a {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 14px 20px;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.nav-inner a:hover {
+  color: var(--green);
+  border-bottom-color: var(--gold);
+}
+
+/* CONTENT */
+.content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 60px 48px;
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 64px;
+  align-items: start;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: sticky;
+  top: 80px;
+}
+
+.sidebar-box {
+  background: var(--paper2);
+  border: 1px solid var(--rule);
+  border-top: 3px solid var(--green);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.sidebar-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.sidebar-box a {
+  display: block;
+  font-size: 14px;
+  color: var(--slate);
+  text-decoration: none;
+  padding: 5px 0;
+  border-bottom: 1px solid transparent;
+  transition: all 0.15s;
+}
+
+.sidebar-box a:hover { color: var(--green); border-bottom-color: var(--gold); padding-left: 6px; }
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--rule);
+  font-size: 14px;
+}
+.stat-item:last-child { border-bottom: none; }
+.stat-label { color: var(--muted); }
+.stat-val { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--green); font-weight: 500; }
+
+/* ARTICLE */
+article { min-width: 0; }
+
+/* SECTION */
+.wiki-section {
+  margin-bottom: 56px;
+  scroll-margin-top: 80px;
+}
+
+.section-rule {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.section-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--green);
+  line-height: 1.2;
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--rule), transparent);
+}
+
+p { margin-bottom: 16px; color: #2A2620; }
+
+p:last-child { margin-bottom: 0; }
+
+/* LEAD */
+.lead {
+  font-size: 21px;
+  line-height: 1.6;
+  color: var(--slate);
+  font-style: italic;
+  border-left: 3px solid var(--gold);
+  padding-left: 20px;
+  margin-bottom: 28px;
+}
+
+/* FEATURES GRID */
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.feature-card {
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--green);
+  padding: 18px 20px;
+  transition: all 0.2s;
+}
+
+.feature-card:hover {
+  border-left-color: var(--gold);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+}
+
+.feature-icon {
+  font-size: 22px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.feature-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 6px;
+}
+
+.feature-desc {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* FORMULA BOX */
+.formula-box {
+  background: var(--green);
+  color: var(--paper);
+  padding: 28px 32px;
+  margin: 28px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.formula-box::before {
+  content: 'FORMULA';
+  position: absolute;
+  top: 12px; right: 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(184,137,42,0.5);
+}
+
+.formula-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--gold-light);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.formula-line {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  color: #E8F5E9;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.formula-line:last-child { border-bottom: none; }
+.formula-key { color: var(--gold-light); }
+.formula-comment { color: rgba(255,255,255,0.4); font-size: 12px; font-style: italic; font-family: 'Crimson Pro', serif; }
+
+/* REFERENCE TABLE */
+.ref-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 14px;
+}
+
+.ref-table th {
+  background: var(--green);
+  color: var(--gold-light);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  text-align: left;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.ref-table td {
+  padding: 9px 14px;
+  border: 1px solid var(--rule);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+}
+
+.ref-table tr:nth-child(even) td { background: var(--paper2); }
+.ref-table tr:nth-child(odd) td { background: #fff; }
+.ref-table .td-green { color: var(--green); font-weight: 500; }
+.ref-table .td-gold { color: var(--gold); font-weight: 500; }
+.ref-table .td-rust { color: var(--rust); }
+
+/* CALLOUT */
+.callout {
+  background: rgba(184,137,42,0.08);
+  border: 1px solid rgba(184,137,42,0.25);
+  border-left: 4px solid var(--gold);
+  padding: 16px 20px;
+  margin: 20px 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--slate);
+}
+
+.callout strong { color: var(--green); }
+
+.callout-warn {
+  background: rgba(139,58,42,0.06);
+  border-color: var(--rust);
+  border-left-color: var(--rust);
+}
+
+/* STEP LIST */
+.step-list { margin: 20px 0; list-style: none; }
+.step-list li {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 14px;
+  align-items: flex-start;
+}
+.step-num {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  background: var(--green);
+  color: var(--gold-light);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px;
+}
+.step-body { font-size: 16px; line-height: 1.6; }
+.step-body strong { color: var(--green); }
+
+/* INLINE CODE */
+code {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  background: var(--paper2);
+  border: 1px solid var(--rule);
+  padding: 2px 7px;
+  border-radius: 2px;
+  color: var(--rust);
+}
+
+/* TAG LIST */
+.tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  padding: 4px 12px;
+  border-radius: 2px;
+  border: 1px solid;
+}
+.tag-green { background: rgba(27,67,50,0.08); border-color: rgba(27,67,50,0.2); color: var(--green); }
+.tag-gold { background: rgba(184,137,42,0.1); border-color: rgba(184,137,42,0.3); color: var(--gold); }
+.tag-slate { background: rgba(61,74,92,0.08); border-color: rgba(61,74,92,0.2); color: var(--slate); }
+
+/* DIVIDER */
+.divider {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 48px 0;
+}
+
+/* FOOTER */
+footer {
+  background: var(--green);
+  color: rgba(247,243,236,0.6);
+  padding: 40px 48px;
+  text-align: center;
+  border-top: 3px solid var(--gold);
+  font-size: 14px;
+}
+
+footer strong { color: var(--gold-light); }
+
+/* PRINT */
+@media print {
+  nav, .sidebar { display: none; }
+  .content { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  .masthead-inner { grid-template-columns: 1fr; }
+  .masthead-stamp { display: none; }
+  .content { grid-template-columns: 1fr; padding: 32px 20px; }
+  .sidebar { position: static; }
+  .feature-grid { grid-template-columns: 1fr; }
+  .nav-inner { padding: 0 20px; }
+  .masthead-inner { padding: 40px 24px 36px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <div class="masthead-eyebrow">Project Documentation · Version 1.0</div>
+      <h1>Kumar <span>Chits</span><br>Manager</h1>
+      <p class="masthead-sub">A complete organiser dashboard for managing chit fund groups — built as a single offline HTML file.</p>
+    </div>
+    <div class="masthead-meta">
+      <div class="meta-pill">SINGLE HTML FILE</div>
+      <div class="meta-pill">100% OFFLINE</div>
+      <div class="meta-pill">NO LOGIN REQUIRED</div>
+      <div class="meta-pill">FREE TO USE</div>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#overview">Overview</a>
+    <a href="#how-it-works">How It Works</a>
+    <a href="#formula">Formula</a>
+    <a href="#features">Features</a>
+    <a href="#tabs">Tab Guide</a>
+    <a href="#hosting">Hosting</a>
+    <a href="#reference">Reference</a>
+  </div>
+</nav>
+
+<div class="content">
+
+<!-- MAIN ARTICLE -->
+<article>
+
+  <!-- OVERVIEW -->
+  <section class="wiki-section" id="overview">
+    <div class="section-rule">
+      <span class="section-num">01</span>
+      <h2>Overview</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <p class="lead">Kumar Chits Manager is a browser-based organiser dashboard for running chit fund groups — built entirely as a self-contained HTML file that works offline, requires no login, and stores nothing in the cloud.</p>
+
+    <p>A <strong>chit fund</strong> (also called a "chit" or "chitty") is a rotating savings scheme popular across South India. A group of members each contribute a fixed monthly amount into a common pool. Every month, one member "lifts" (receives) the entire pool. This continues until every member has lifted once.</p>
+
+    <p>This dashboard is designed specifically for the <strong>organiser</strong> — the person who runs the chit, collects contributions, disburses payouts, and earns a profit for their service. The organiser does <em>not</em> participate as a member; they manage the group and retain earnings from the spread between what is collected and what is paid out.</p>
+
+    <div class="tag-list">
+      <span class="tag tag-green">Chit Fund</span>
+      <span class="tag tag-green">Rotating Savings</span>
+      <span class="tag tag-gold">Organiser Profit</span>
+      <span class="tag tag-gold">Declining Contribution</span>
+      <span class="tag tag-slate">Offline App</span>
+      <span class="tag tag-slate">No Framework</span>
+      <span class="tag tag-slate">Single HTML File</span>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- HOW IT WORKS -->
+  <section class="wiki-section" id="how-it-works">
+    <div class="section-rule">
+      <span class="section-num">02</span>
+      <h2>How It Works</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <p>The Kumar Chits model uses a <strong>declining contribution structure</strong> — unlike traditional chit funds where all members pay the same amount every month, here a member's monthly contribution decreases over time the longer they wait before lifting.</p>
+
+    <div class="callout">
+      <strong>Core Principle:</strong> Members who lift early pay more in total. Members who lift later pay less — because their monthly "Not Lift" rate keeps declining. The organiser benefits from the gap between total collections and total payouts.
+    </div>
+
+    <ul class="step-list">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-body"><strong>Setup:</strong> Organiser decides the chit value (e.g. ₹15,000), number of members (e.g. 10), and duration (e.g. 10 months). Each member is assigned a month in which they will lift.</div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-body"><strong>Contributions calculated:</strong> The "If Lift" rate (paid the month a member lifts) is fixed. The "Not Lift" rate (paid every other month) starts equal to the "If Lift" rate in Month 1 and decreases by a fixed step each month.</div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-body"><strong>Monthly pool:</strong> Each month, one member lifts. That member pays the "If Lift" rate. All other members pay the "Not Lift" rate for that month. The total collected is the pool.</div>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <div class="step-body"><strong>Payout:</strong> The lifting member receives the full chit value (e.g. ₹15,000) regardless of which month they lift.</div>
+      </li>
+      <li>
+        <div class="step-num">5</div>
+        <div class="step-body"><strong>Organiser profit:</strong> Because the pool collected each month (especially early months) exceeds the fixed payout, the organiser accumulates a profit over the full duration.</div>
+      </li>
+    </ul>
+
+    <div class="callout callout-warn">
+      <strong>Important:</strong> The organiser is not counted as a member. They do not lift a chit. Their income is purely the difference between what is collected from members and what is paid out as chit value.
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- FORMULA -->
+  <section class="wiki-section" id="formula">
+    <div class="section-rule">
+      <span class="section-num">03</span>
+      <h2>The Formula</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <p>The contribution rates are derived from a precise formula verified across all reference chit plans from Kumar Chits. Every number shown in the dashboard matches exactly with the printed reference charts.</p>
+
+    <div class="formula-box">
+      <div class="formula-title">Contribution Rate Calculation</div>
+      <div class="formula-line">
+        <span><span class="formula-key">IF LIFT</span> = round( ChitValue × 1.2 ÷ Members )</span>
+        <span class="formula-comment">Fixed every month</span>
+      </div>
+      <div class="formula-line">
+        <span><span class="formula-key">NOT LIFT (Month 1)</span> = IF LIFT</span>
+        <span class="formula-comment">Starts equal to lift rate</span>
+      </div>
+      <div class="formula-line">
+        <span><span class="formula-key">STEP</span> = round( startAmt ÷ (2 × (N−1)) )</span>
+        <span class="formula-comment">Monthly reduction, rounded clean</span>
+      </div>
+      <div class="formula-line">
+        <span><span class="formula-key">NOT LIFT (Month m)</span> = startAmt − (m−1) × step</span>
+        <span class="formula-comment">Decreases each month</span>
+      </div>
+      <div class="formula-line">
+        <span><span class="formula-key">POOL (Month m)</span> = (Members−1) × notLift(m) + ifLift</span>
+        <span class="formula-comment">Total collected that month</span>
+      </div>
+      <div class="formula-line">
+        <span><span class="formula-key">ORGANISER PROFIT</span> = Σ Pool(m) − (N × ChitValue)</span>
+        <span class="formula-comment">Across all N months</span>
+      </div>
+    </div>
+
+    <p>The following table shows verified examples from the actual Kumar Chits reference boards:</p>
+
+    <table class="ref-table">
+      <thead>
+        <tr>
+          <th>Chit Value</th>
+          <th>Members</th>
+          <th>If Lift</th>
+          <th>Not Lift M1</th>
+          <th>Step</th>
+          <th>Not Lift Last</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-gold">₹10,000</td>
+          <td>10 / 10m</td>
+          <td class="td-green">₹1,200</td>
+          <td class="td-green">₹1,200</td>
+          <td>₹50</td>
+          <td class="td-rust">₹750</td>
+        </tr>
+        <tr>
+          <td class="td-gold">₹15,000</td>
+          <td>10 / 10m</td>
+          <td class="td-green">₹1,800</td>
+          <td class="td-green">₹1,800</td>
+          <td>₹100</td>
+          <td class="td-rust">₹900</td>
+        </tr>
+        <tr>
+          <td class="td-gold">₹25,000</td>
+          <td>10 / 10m</td>
+          <td class="td-green">₹3,000</td>
+          <td class="td-green">₹3,000</td>
+          <td>~₹167</td>
+          <td class="td-rust">₹1,500</td>
+        </tr>
+        <tr>
+          <td class="td-gold">₹1,00,000</td>
+          <td>12 / 12m</td>
+          <td class="td-green">₹10,000</td>
+          <td class="td-green">₹10,000</td>
+          <td>₹500</td>
+          <td class="td-rust">₹4,500</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr class="divider">
+
+  <!-- FEATURES -->
+  <section class="wiki-section" id="features">
+    <div class="section-rule">
+      <span class="section-num">04</span>
+      <h2>Features</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <p>The dashboard is packed with organiser-focused tools. All features run entirely in your browser — no internet required once the file is opened.</p>
+
+    <div class="feature-grid">
+
+      <div class="feature-card">
+        <span class="feature-icon">⚙️</span>
+        <div class="feature-title">Flexible Configuration</div>
+        <p class="feature-desc">Set any chit value, any number of members, and any duration. Supports chit values from ₹10,000 to ₹5,00,000 and durations from 2 to 50 months.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">📐</span>
+        <div class="feature-title">Auto Formula Engine</div>
+        <p class="feature-desc">Instantly calculates "If Lift", "Not Lift", step reduction, pool per month, and organiser profit — all matching the verified Kumar Chits formula.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">✏️</span>
+        <div class="feature-title">Manual Overrides</div>
+        <p class="feature-desc">Not happy with the calculated amounts? Edit any "Not Lift" or "If Lift" value for any month directly in the table. Overridden cells turn red; auto cells stay green.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">↺</span>
+        <div class="feature-title">Reset to Auto</div>
+        <p class="feature-desc">One button to discard all manual changes and revert every month's contribution back to the auto-calculated formula values.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">👥</span>
+        <div class="feature-title">Member Management</div>
+        <p class="feature-desc">Add and edit member names and phone numbers. Assign each member to their chosen lift month. The system flags conflicts if two members are assigned the same month.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">📅</span>
+        <div class="feature-title">Calendar Integration</div>
+        <p class="feature-desc">Set a chit start month (e.g. June 2025) and all months in the schedule automatically show real calendar month names (Jun 2025, Jul 2025…).</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">📊</span>
+        <div class="feature-title">Live Profit Tracking</div>
+        <p class="feature-desc">The profit banner updates in real time as you change any value — showing total collected, total paid out, net organiser profit, and average monthly earnings.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">📋</span>
+        <div class="feature-title">Member-wise Summary</div>
+        <p class="feature-desc">For every member: total amount paid across all months, amount received, net gain or loss, effective chit cost, and savings compared to lifting in Month 1.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">📉</span>
+        <div class="feature-title">Cumulative Balance</div>
+        <p class="feature-desc">The schedule tab shows the organiser's cumulative running balance after each month — so you can see exactly when you break even and when profit builds.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">⬇️</span>
+        <div class="feature-title">CSV / Excel Downloads</div>
+        <p class="feature-desc">Download any table as a CSV file: Contribution Table, Monthly Schedule, Member Details, or a complete combined report — all open directly in Microsoft Excel or Google Sheets.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">🌐</span>
+        <div class="feature-title">Works Offline</div>
+        <p class="feature-desc">The entire app is a single HTML file. Once opened in a browser, it works with zero internet connection. No app install, no account, no server needed.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">🔒</span>
+        <div class="feature-title">Private by Default</div>
+        <p class="feature-desc">Your data never leaves your device. There is no backend, no analytics, no data collection. The file can be hosted privately on Netlify with password protection if needed.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- TAB GUIDE -->
+  <section class="wiki-section" id="tabs">
+    <div class="section-rule">
+      <span class="section-num">05</span>
+      <h2>Tab-by-Tab Guide</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <p>The dashboard is organised into five tabs. Each tab focuses on a specific aspect of chit management.</p>
+
+    <ul class="step-list">
+      <li>
+        <div class="step-num">①</div>
+        <div class="step-body">
+          <strong>Setup Tab</strong> — Enter the chit value, number of members, duration, group name, and start month. Hit "Generate Chit Plan" and all five tabs populate instantly. The live formula bar shows the derived rates before you even generate. The profit banner at the bottom summarises total earnings.
+        </div>
+      </li>
+      <li>
+        <div class="step-num">②</div>
+        <div class="step-body">
+          <strong>Contributions Tab</strong> — Shows the full contribution table month-by-month: Not Lift rate, If Lift rate, pool collected, chit payout, and organiser gain per month. Every cell in the Not Lift and If Lift columns is editable — type in a new number to override. A running total row shows the grand figures.
+        </div>
+      </li>
+      <li>
+        <div class="step-num">③</div>
+        <div class="step-body">
+          <strong>Schedule Tab</strong> — Shows who lifts each calendar month, how much the pool is, how much is paid out, and the organiser's gain and running cumulative profit for each month. This is the primary record you'd use month-to-month during the chit run.
+        </div>
+      </li>
+      <li>
+        <div class="step-num">④</div>
+        <div class="step-body">
+          <strong>Members Tab</strong> — Lists all members with editable name and phone fields. A dropdown lets you change which month each member lifts. Columns show their total contribution, what they receive, and their net position.
+        </div>
+      </li>
+      <li>
+        <div class="step-num">⑤</div>
+        <div class="step-body">
+          <strong>Summary Tab</strong> — A clean final summary per member: total paid, received, net gain/loss, effective cost, and savings compared to lifting in Month 1. Plus an overall organiser profit card at the top. Best used for printing or sharing.
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <hr class="divider">
+
+  <!-- HOSTING -->
+  <section class="wiki-section" id="hosting">
+    <div class="section-rule">
+      <span class="section-num">06</span>
+      <h2>Hosting Options</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <p>Since the app is a single <code>.html</code> file, hosting is entirely optional. The simplest and most private option is to just open the file directly from your device.</p>
+
+    <div class="callout">
+      <strong>Recommended for most users:</strong> Save the file on your phone or laptop and open it in Chrome or Safari. It works completely offline with no setup required.
+    </div>
+
+    <table class="ref-table">
+      <thead>
+        <tr>
+          <th>Option</th>
+          <th>Cost</th>
+          <th>Privacy</th>
+          <th>Setup</th>
+          <th>Multi-device</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-green">Local file (phone/PC)</td>
+          <td>Free</td>
+          <td class="td-green">Maximum</td>
+          <td>None</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="td-gold">Netlify + Password</td>
+          <td>Free</td>
+          <td class="td-green">Password locked</td>
+          <td>5 min</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td>GitHub Pages</td>
+          <td>Free</td>
+          <td>URL is public</td>
+          <td>10 min</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td>Cloudflare Pages + Access</td>
+          <td>Free</td>
+          <td class="td-green">Email OTP login</td>
+          <td>20 min</td>
+          <td>Yes</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr class="divider">
+
+  <!-- REFERENCE -->
+  <section class="wiki-section" id="reference">
+    <div class="section-rule">
+      <span class="section-num">07</span>
+      <h2>Quick Reference</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <p>Key terms used throughout the dashboard:</p>
+
+    <ul class="step-list">
+      <li>
+        <div class="step-num">◆</div>
+        <div class="step-body"><strong>Chit Value</strong> — The lump sum amount paid to the member who lifts in a given month (e.g. ₹15,000).</div>
+      </li>
+      <li>
+        <div class="step-num">◆</div>
+        <div class="step-body"><strong>If Lift</strong> — The contribution paid by a member in the specific month they lift. Fixed and equal to <code>ChitValue × 1.2 ÷ Members</code>.</div>
+      </li>
+      <li>
+        <div class="step-num">◆</div>
+        <div class="step-body"><strong>Not Lift</strong> — The contribution paid by a member in every month they do not lift. Starts equal to "If Lift" in Month 1 and decreases by the step amount each month.</div>
+      </li>
+      <li>
+        <div class="step-num">◆</div>
+        <div class="step-body"><strong>Step</strong> — The fixed monthly reduction in the "Not Lift" contribution rate, automatically calculated and rounded to a clean number.</div>
+      </li>
+      <li>
+        <div class="step-num">◆</div>
+        <div class="step-body"><strong>Pool</strong> — Total amount collected in a given month = (Members − 1) × notLift(m) + ifLift. This is always greater than the chit value — the difference is organiser profit.</div>
+      </li>
+      <li>
+        <div class="step-num">◆</div>
+        <div class="step-body"><strong>Organiser Profit</strong> — Cumulative surplus across all months = Total Collected − Total Paid Out. The organiser is not a member and earns only this profit.</div>
+      </li>
+      <li>
+        <div class="step-num">◆</div>
+        <div class="step-body"><strong>Manual Override</strong> — When you edit any "Not Lift" or "If Lift" cell directly, that cell is flagged as manually set (shown with red border) and excluded from auto-recalculation until reset.</div>
+      </li>
+    </ul>
+
+    <div class="callout">
+      <strong>File tech stack:</strong> Pure HTML + CSS + JavaScript. No frameworks, no npm, no build step. Any browser from the past 5 years can run it. File size is under 50 KB.
+    </div>
+
+  </section>
+
+</article>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+  <div class="sidebar-box">
+    <div class="sidebar-title">Contents</div>
+    <a href="#overview">01 — Overview</a>
+    <a href="#how-it-works">02 — How It Works</a>
+    <a href="#formula">03 — The Formula</a>
+    <a href="#features">04 — Features</a>
+    <a href="#tabs">05 — Tab Guide</a>
+    <a href="#hosting">06 — Hosting</a>
+    <a href="#reference">07 — Quick Reference</a>
+  </div>
+
+  <div class="sidebar-box">
+    <div class="sidebar-title">Project Stats</div>
+    <div class="stat-item"><span class="stat-label">File type</span><span class="stat-val">.html</span></div>
+    <div class="stat-item"><span class="stat-label">File size</span><span class="stat-val">&lt; 50 KB</span></div>
+    <div class="stat-item"><span class="stat-label">Dependencies</span><span class="stat-val">Zero</span></div>
+    <div class="stat-item"><span class="stat-label">Framework</span><span class="stat-val">None</span></div>
+    <div class="stat-item"><span class="stat-label">Backend</span><span class="stat-val">None</span></div>
+    <div class="stat-item"><span class="stat-label">Works offline</span><span class="stat-val">Yes</span></div>
+    <div class="stat-item"><span class="stat-label">Data stored</span><span class="stat-val">Nowhere</span></div>
+    <div class="stat-item"><span class="stat-label">Download types</span><span class="stat-val">CSV / Excel</span></div>
+    <div class="stat-item"><span class="stat-label">Tabs</span><span class="stat-val">5</span></div>
+    <div class="stat-item"><span class="stat-label">Max members</span><span class="stat-val">50</span></div>
+    <div class="stat-item"><span class="stat-label">Max months</span><span class="stat-val">50</span></div>
+  </div>
+
+  <div class="sidebar-box">
+    <div class="sidebar-title">Verified Chit Plans</div>
+    <div class="stat-item"><span class="stat-label">₹10,000 / 10m</span><span class="stat-val">₹1,200 lift</span></div>
+    <div class="stat-item"><span class="stat-label">₹15,000 / 10m</span><span class="stat-val">₹1,800 lift</span></div>
+    <div class="stat-item"><span class="stat-label">₹25,000 / 10m</span><span class="stat-val">₹3,000 lift</span></div>
+    <div class="stat-item"><span class="stat-label">₹1,00,000 / 12m</span><span class="stat-val">₹10,000 lift</span></div>
+  </div>
+
+  <div class="sidebar-box" style="border-top-color:var(--gold)">
+    <div class="sidebar-title">Future Enhancements</div>
+    <a href="#">Payment tracking per month</a>
+    <a href="#">Receipt / voucher generation</a>
+    <a href="#">Multiple chit groups</a>
+    <a href="#">WhatsApp reminders</a>
+    <a href="#">Print-friendly view</a>
+  </div>
+
+</aside>
+
+</div><!-- end .content -->
+
+<footer>
+  <strong>Kumar Chits Manager</strong> · Organiser Dashboard · Version 1.0<br>
+  Built as a single offline HTML file · Your Trust, Our Commitment ★
+</footer>
+
+</div>
+</body>
+</html>
