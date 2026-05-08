@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kumar Chits — Organiser Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;500;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+// Polyfill: If html2canvas fails due to cross-origin iframe issues (file:// protocol),
+// we'll use a canvas-based fallback approach
+</script>
 <style>
 :root {
   --Y:#F5C800; --YD:#C9A200; --GD:#1B4332; --GM:#2D6A4F;
@@ -18,18 +23,20 @@ body{background:#EDD900;background-image:radial-gradient(circle at 10% 10%,rgba(
 /* HEADER */
 header{background:var(--Y);border-bottom:6px solid var(--GD);box-shadow:var(--SH);position:sticky;top:0;z-index:200}
 .hdr{max-width:1400px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
-.brand{display:flex;align-items:center;gap:12px}
-.bicon{width:54px;height:54px;border-radius:50%;background:var(--GD);border:3px solid var(--YD);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 3px 10px rgba(0,0,0,.3)}
-.brand h1{font-family:'Teko',sans-serif;font-size:40px;font-weight:700;color:var(--GD);line-height:1;letter-spacing:3px}
-.brand p{font-size:11px;color:var(--GM);font-weight:800;letter-spacing:1px;text-transform:uppercase}
-.hpills{display:flex;gap:8px;flex-wrap:wrap}
-.pill{background:var(--GD);color:var(--Y);padding:6px 14px;border-radius:30px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600}
+.brand{display:flex;align-items:center;gap:12px;min-width:0;flex-shrink:1}
+.bicon{width:54px;height:54px;border-radius:50%;background:var(--GD);border:3px solid var(--YD);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 3px 10px rgba(0,0,0,.3);flex-shrink:0}
+.brand h1{font-family:'Teko',sans-serif;font-size:40px;font-weight:700;color:var(--GD);line-height:1;letter-spacing:3px;white-space:nowrap}
+.brand p{font-size:11px;color:var(--GM);font-weight:800;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.hpills{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.pill{background:var(--GD);color:var(--Y);padding:6px 14px;border-radius:30px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;white-space:nowrap}
 
 main{max-width:1400px;margin:0 auto;padding:24px 28px}
 
 /* TABS */
-.tabs{display:flex;gap:0;margin-bottom:0;border-bottom:4px solid var(--GD)}
-.tab{background:#C9A200;color:var(--GD);border:none;padding:11px 24px;font-family:'Teko',sans-serif;font-size:19px;letter-spacing:1px;cursor:pointer;border-radius:8px 8px 0 0;margin-right:4px;transition:all .2s;font-weight:700}
+.tabs{display:flex;gap:0;margin-bottom:0;border-bottom:4px solid var(--GD);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.tabs::-webkit-scrollbar{height:4px}
+.tabs::-webkit-scrollbar-thumb{background:var(--GD);border-radius:4px}
+.tab{background:#C9A200;color:var(--GD);border:none;padding:11px 24px;font-family:'Teko',sans-serif;font-size:19px;letter-spacing:1px;cursor:pointer;border-radius:8px 8px 0 0;margin-right:4px;transition:all .2s;font-weight:700;white-space:nowrap;flex-shrink:0}
 .tab.active{background:var(--GD);color:var(--Y)}
 .tab:hover:not(.active){background:var(--YD)}
 .tab-panel{display:none;background:var(--CR);border:var(--BOR);border-top:none;border-radius:0 0 12px 12px;box-shadow:var(--SH);padding:24px;margin-bottom:24px}
@@ -44,7 +51,7 @@ main{max-width:1400px;margin:0 auto;padding:24px 28px}
 .cfg-sel{background:#fff;border:2px solid var(--GD);border-radius:7px;padding:9px 12px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:var(--TX);cursor:pointer;outline:none;width:100%}
 
 /* BUTTONS */
-.btn{border:none;border-radius:8px;cursor:pointer;font-family:'Teko',sans-serif;font-size:19px;letter-spacing:1px;padding:10px 22px;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn{border:none;border-radius:8px;cursor:pointer;font-family:'Teko',sans-serif;font-size:19px;letter-spacing:1px;padding:10px 22px;transition:all .2s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .btn-green{background:var(--GD);color:var(--Y)}
 .btn-green:hover{background:var(--GM);transform:translateY(-2px)}
 .btn-yellow{background:var(--Y);color:var(--GD);border:2px solid var(--GD)}
@@ -56,7 +63,7 @@ main{max-width:1400px;margin:0 auto;padding:24px 28px}
 .btn-sm{font-size:14px;padding:6px 14px}
 
 /* SECTION HEADER */
-.shdr{background:var(--GD);color:var(--Y);font-family:'Teko',sans-serif;font-size:22px;letter-spacing:1.5px;padding:9px 20px;border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:space-between}
+.shdr{background:var(--GD);color:var(--Y);font-family:'Teko',sans-serif;font-size:22px;letter-spacing:1.5px;padding:9px 20px;border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .scard{background:var(--CR);border:var(--BOR);border-top:none;border-radius:0 0 10px 10px;margin-bottom:22px;overflow:hidden}
 .spad{padding:20px}
 
@@ -76,7 +83,7 @@ main{max-width:1400px;margin:0 auto;padding:24px 28px}
 .psep{background:rgba(245,200,0,.25);height:50px;width:1px;margin:auto}
 
 /* TABLES */
-.tscroll{overflow-x:auto}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th{padding:9px 12px;text-align:center;font-family:'Teko',sans-serif;font-size:14px;letter-spacing:.6px;border:1px solid rgba(0,0,0,.15)}
 td{padding:8px 12px;text-align:center;border:1px solid rgba(0,0,0,.1);vertical-align:middle}
@@ -119,13 +126,80 @@ tr.tot-r td{background:var(--GD)!important;color:var(--Y);font-weight:700;font-f
 .dl-bar{background:var(--NV);border-radius:10px;padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
 .dl-lbl{color:rgba(255,255,255,.7);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px}
 
-@media(max-width:800px){
-  main{padding:14px}
-  .hdr{padding:12px 14px}
-  .pbanner{grid-template-columns:1fr 1fr}
+/* ========== CHIT BUILDER STYLES ========== */
+.cb-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.cb-controls .btn{font-size:15px;padding:8px 16px}
+.cb-table-wrap{background:#fff;border:3px solid var(--GD);border-radius:10px;overflow:hidden;margin-bottom:20px}
+.cb-table{width:100%;border-collapse:collapse;font-size:13px}
+.cb-table th{padding:10px 14px;text-align:center;font-family:'Teko',sans-serif;font-size:15px;letter-spacing:.8px;border:1px solid rgba(0,0,0,.15);position:relative}
+.cb-table td{padding:6px 8px;text-align:center;border:1px solid rgba(0,0,0,.1);vertical-align:middle}
+.cb-table .cb-input{width:100%;min-width:70px;background:transparent;border:1.5px solid transparent;border-radius:4px;padding:6px 8px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--TX);text-align:center;outline:none;transition:border-color .2s}
+.cb-table .cb-input:focus{border-color:var(--NV);background:#F0F4FF}
+.cb-table .cb-input:hover{border-color:var(--YD)}
+.cb-sub-header th{font-size:11px;padding:6px 10px;background:var(--YD);color:var(--TX);font-weight:700}
+.cb-col-remove{position:absolute;top:2px;right:4px;background:var(--RD);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
+.cb-table th:hover .cb-col-remove{opacity:1}
+.cb-row-remove{background:var(--RD);color:#fff;border:none;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;font-weight:700}
+.cb-row-remove:hover{opacity:.8}
+.cb-header-input{background:transparent;border:none;border-bottom:2px dashed rgba(245,200,0,.5);color:inherit;font-family:'Teko',sans-serif;font-size:14px;letter-spacing:.6px;text-align:center;outline:none;width:100%;padding:2px 4px}
+.cb-header-input:focus{border-bottom-color:var(--Y)}
+.cb-header-input::placeholder{color:rgba(245,200,0,.4)}
+
+/* Image preview modal */
+.cb-preview-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:999;justify-content:center;align-items:center;padding:20px}
+.cb-preview-overlay.show{display:flex}
+.cb-preview-box{background:#fff;border-radius:12px;padding:20px;max-width:95vw;max-height:95vh;overflow:auto;box-shadow:0 10px 40px rgba(0,0,0,.4)}
+.cb-preview-box img{max-width:100%;border-radius:8px}
+.cb-preview-actions{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+
+/* ========== MOBILE RESPONSIVE ========== */
+@media(max-width:900px){
+  main{padding:16px}
+  .hdr{padding:12px 16px;flex-direction:column;align-items:stretch;gap:10px}
+  .brand{justify-content:center}
+  .hpills{justify-content:center}
+  .pbanner{grid-template-columns:1fr 1fr;gap:12px}
   .psep{display:none}
-  .fbar{grid-template-columns:1fr 1fr}
+  .fbar{grid-template-columns:1fr 1fr;gap:10px}
   .cfg-grid{grid-template-columns:1fr 1fr}
+  .tab{padding:9px 16px;font-size:16px}
+  .shdr{font-size:18px;padding:8px 14px}
+}
+
+@media(max-width:600px){
+  main{padding:10px}
+  .hdr{padding:10px 12px;gap:8px}
+  .brand h1{font-size:28px;letter-spacing:2px}
+  .brand p{font-size:9px;letter-spacing:.5px}
+  .bicon{width:42px;height:42px;font-size:18px}
+  .hpills{gap:5px}
+  .pill{padding:4px 10px;font-size:9px}
+  .tab{padding:7px 12px;font-size:14px;margin-right:2px}
+  .tab-panel{padding:14px;margin-bottom:16px}
+  .cfg-grid{grid-template-columns:1fr}
+  .cfg-inp,.cfg-sel{font-size:13px;padding:8px 10px}
+  .pbanner{grid-template-columns:1fr;gap:10px;padding:14px 16px}
+  .pi-v{font-size:26px}
+  .pi-l{font-size:9px}
+  .fbar{grid-template-columns:1fr;padding:14px 16px}
+  .fi-v{font-size:22px}
+  .btn{font-size:15px;padding:8px 16px}
+  .btn-sm{font-size:12px;padding:5px 10px}
+  .dl-bar{padding:10px 14px;gap:8px;flex-direction:column;align-items:flex-start}
+  .shdr{font-size:16px;padding:8px 12px;flex-direction:column;gap:4px}
+  .spad{padding:12px}
+  .note,.info{font-size:11px;padding:8px 10px}
+  .flex-row{gap:6px}
+  .cb-controls{flex-direction:column;align-items:stretch}
+  .cb-controls .btn{justify-content:center}
+}
+
+@media(max-width:400px){
+  .brand h1{font-size:24px;letter-spacing:1px}
+  .brand p{font-size:8px}
+  .bicon{width:36px;height:36px;font-size:16px}
+  .pill{padding:3px 8px;font-size:8px}
+  .tab{padding:6px 8px;font-size:12px;letter-spacing:.5px}
 }
 </style>
 </head>
@@ -153,18 +227,19 @@ tr.tot-r td{background:var(--GD)!important;color:var(--Y);font-weight:700;font-f
 
 <!-- TABS -->
 <div class="tabs">
-  <button class="tab active" onclick="showTab('setup')">⚙️ SETUP</button>
-  <button class="tab" onclick="showTab('contrib')">📊 CONTRIBUTIONS</button>
-  <button class="tab" onclick="showTab('schedule')">📅 SCHEDULE</button>
-  <button class="tab" onclick="showTab('members')">👥 MEMBERS</button>
-  <button class="tab" onclick="showTab('summary')">📋 SUMMARY</button>
+  <button class="tab active" data-tab="setup" onclick="showTab('setup',this)">⚙️ SETUP</button>
+  <button class="tab" data-tab="contrib" onclick="showTab('contrib',this)">📊 CONTRIBUTIONS</button>
+  <button class="tab" data-tab="schedule" onclick="showTab('schedule',this)">📅 SCHEDULE</button>
+  <button class="tab" data-tab="members" onclick="showTab('members',this)">👥 MEMBERS</button>
+  <button class="tab" data-tab="summary" onclick="showTab('summary',this)">📋 SUMMARY</button>
+  <button class="tab" data-tab="builder" onclick="showTab('builder',this)">🏗️ CHIT BUILDER</button>
 </div>
 
 <!-- TAB: SETUP -->
 <div id="tab-setup" class="tab-panel active">
 
   <div class="note">
-    ⚠️ <strong>Organiser Model:</strong> You are the organiser and do <strong>NOT</strong> participate as a member. You collect profit = Total contributions collected − Total chit payouts made. Members pay the "Not Lift" rate every month except the month they lift (they pay "If Lift" rate that month).
+    ⚠️ <strong>Organiser Model:</strong> You are the organiser and do <strong>NOT</strong> participate as a member. Members who haven't lifted yet pay a decreasing monthly amount. Once a member lifts, they pay a fixed amount (equal to Month 1 rate) for all remaining months. Profit = Pool Collected − Chit Value each month.
   </div>
 
   <div class="shdr">⚙️ CHIT CONFIGURATION</div>
@@ -194,6 +269,7 @@ tr.tot-r td{background:var(--GD)!important;color:var(--Y);font-weight:700;font-f
           <option>July 2025</option><option>August 2025</option><option>September 2025</option>
           <option>October 2025</option><option>November 2025</option><option>December 2025</option>
           <option>January 2026</option><option>February 2026</option><option>March 2026</option>
+          <option>April 2026</option><option>May 2026</option><option>June 2026</option>
         </select>
       </div>
     </div>
@@ -225,7 +301,8 @@ tr.tot-r td{background:var(--GD)!important;color:var(--Y);font-weight:700;font-f
   </div>
 
   <div class="info">
-    🔵 <strong>Blue border</strong> = Auto-calculated. <strong>Red border / red background</strong> = Manually overridden. You can freely edit any value — the pool total updates automatically.
+    🔵 <strong>Blue border</strong> = Auto-calculated. <strong>Red border / red background</strong> = Manually overridden. You can freely edit any value — the pool total updates automatically.<br>
+    📌 <strong>New Logic:</strong> Members who already lifted pay the <strong>fixed rate</strong> (Month 1 amount). Members who haven't lifted yet (including the current lifter) pay the <strong>decreasing rate</strong>.
   </div>
 
   <div class="flex-row">
@@ -243,9 +320,9 @@ tr.tot-r td{background:var(--GD)!important;color:var(--Y);font-weight:700;font-f
         <thead>
           <tr>
             <th class="th-gd">S.No.</th>
-            <th class="th-yw">NOT LIFT (₹)<br><small style="font-size:10px">What member pays if NOT lifting</small></th>
-            <th class="th-gd">IF LIFT (₹)<br><small style="font-size:10px">What member pays when lifting</small></th>
-            <th class="th-nv">POOL COLLECTED (₹)<br><small style="font-size:10px">1 lifter + rest not-lift</small></th>
+            <th class="th-yw">NOT YET LIFTED (₹)<br><small style="font-size:10px">Decreasing rate for unlift members</small></th>
+            <th class="th-gd">ALREADY LIFTED (₹)<br><small style="font-size:10px">Fixed rate for lifted members</small></th>
+            <th class="th-nv">POOL COLLECTED (₹)<br><small style="font-size:10px">(unlift × rate) + (lifted × fixed)</small></th>
             <th class="th-yw">PAYMENT TO LIFTER (₹)</th>
             <th class="th-gd">ORGANISER GAIN (₹)</th>
           </tr>
@@ -364,6 +441,58 @@ tr.tot-r td{background:var(--GD)!important;color:var(--Y);font-weight:700;font-f
   </div>
 </div>
 
+<!-- TAB: CHIT BUILDER -->
+<div id="tab-builder" class="tab-panel">
+
+  <div class="note">
+    🏗️ <strong>Chit Builder:</strong> Create a custom chit table. Add rows, add/remove columns, and fill in your own values. When done, download the table as a high-resolution JPEG image.
+  </div>
+
+  <div class="dl-bar">
+    <span class="dl-lbl">📥 Export:</span>
+    <button class="btn btn-yellow btn-sm" onclick="downloadBuilderImage()">📸 Download as JPEG (High Res)</button>
+  </div>
+
+  <div class="cb-controls">
+    <button class="btn btn-green btn-sm" onclick="cbAddRow()">➕ Add Row</button>
+    <button class="btn btn-red btn-sm" onclick="cbRemoveRow()">➖ Remove Last Row</button>
+    <button class="btn btn-navy btn-sm" onclick="cbAddColumn()">➕ Add Column</button>
+    <button class="btn btn-yellow btn-sm" onclick="cbRemoveColumn()">➖ Remove Column</button>
+    <button class="btn btn-green btn-sm" onclick="cbSetRows()">📏 Set Number of Rows</button>
+    <button class="btn btn-red btn-sm" onclick="cbClearAll()">🗑️ Clear All Data</button>
+  </div>
+
+  <div id="cbTableContainer">
+    <div class="shdr" id="cbTableHeader">
+      🏗️ CHIT BUILDER TABLE
+      <span style="font-size:13px;color:rgba(245,200,0,.7)">Click any cell to edit</span>
+    </div>
+    <div class="scard">
+      <div class="tscroll">
+        <div id="cbTableWrap" class="cb-table-wrap">
+          <table class="cb-table" id="cbTable">
+            <thead id="cbThead"></thead>
+            <tbody id="cbTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Image Preview Modal -->
+<div class="cb-preview-overlay" id="cbPreviewOverlay" onclick="closePreview(event)">
+  <div class="cb-preview-box" onclick="event.stopPropagation()">
+    <h3 style="text-align:center;font-family:'Teko',sans-serif;font-size:24px;color:var(--GD);margin-bottom:10px">📸 Image Preview</h3>
+    <img id="cbPreviewImg" src="" alt="Preview">
+    <div class="cb-preview-actions">
+      <button class="btn btn-green" onclick="saveBuilderImage()">⬇ Download JPEG</button>
+      <button class="btn btn-red" onclick="closePreview()">✖ Close</button>
+    </div>
+  </div>
+</div>
+
 </main>
 
 <script>
@@ -372,10 +501,10 @@ tr.tot-r td{background:var(--GD)!important;color:var(--Y);font-weight:700;font-f
 // ═══════════════════════════════════════════════════════════
 let S = {
   chitVal:10000, nMem:10, nMon:10,
-  ifLift:0, startAmt:0, step:0,
+  fixedRate:0, startAmt:0, step:0,
   members:[], // {name, phone, liftMonth}
-  manualNotLift:[], // per month override or null
-  manualIfLift:[],  // per month override or null
+  manualNotLift:[], // per month override or null (decreasing rate)
+  manualFixed:[],   // per month override or null (fixed rate for lifted members)
   calMonths:[]
 };
 
@@ -389,52 +518,65 @@ const BASE_NAMES = [
 ];
 
 // ═══════════════════════════════════════════════════════════
-// FORMULA
+// FORMULA — NEW CALCULATION LOGIC
 // ═══════════════════════════════════════════════════════════
-// Verified against ALL images:
-// IF LIFT = round(ChitValue * 1.2 / Members) → must match "Payment" column
-// Actually: Payment per month = ChitValue (full chit value)
-// IF LIFT per person = ChitValue * 1.2 / Members
-//   ₹10k/10mem = 1200 ✓, ₹15k/10 = 1800 ✓, ₹25k/10 = 3000 ✓, ₹1L/12 = 10000 ✓
-// NOT LIFT start = same as IF LIFT
-// Step = (startAmt - lastAmt) / (nMon-1)
-// Last amount from images:
-//   ₹10k/10: 750 → step=(1200-750)/9=50 ✓
-//   ₹15k/10: 900 → step=(1800-900)/9=100 ✓
-//   ₹25k/10: 1500 → step=(3000-1500)/9≈167→ image shows uneven (100,100,100,100,100,300,200,200,300) no—image shows 3000,2800,2700,2600,2500,2400,2300,2000,1800,1500
-//   ₹1L/12:  4500 → step=(10000-4500)/11=500 ✓
-// For ₹25k: differences are 200,100,100,100,100,100,300,200,300 — not uniform step
-// But for our calculator we use a clean rounded step and allow manual override
-// Step formula: round startAmt/(2*(nMon-1)) to nearest clean unit
+// For a 10000 chit with 10 members, starting at 1200:
+//
+// Month 1: 1200 × 10 = 12000 → profit 2000
+// Month 2: 1150 × 9 + 1200 × 1 = 11550 → profit 1550
+// Month 3: 1100 × 8 + 1200 × 2 = 11200 → profit 1200
+// ...
+// Month 10: 750 × 1 + 1200 × 9 = 11550 → profit 1550
+//
+// Formula:
+//   fixedRate = ChitVal × 1.2 / Members (what lifted members pay)
+//   startAmt = fixedRate (Month 1 rate for not-yet-lifted)
+//   step = decrease per month
+//   notLiftRate(m) = startAmt - (m-1) × step (decreasing)
+//
+// Pool(m) = (nMem - (m-1)) × notLiftRate(m) + (m-1) × fixedRate
+//         = remaining × currentRate + alreadyLifted × fixedRate
 
 function roundClean(n) {
-  if(n<=0) return 0;
-  const mag = Math.pow(10, Math.max(0, Math.floor(Math.log10(n))-1));
-  return Math.round(n/mag)*mag;
+  if(n <= 0) return 1;
+  const exp = Math.floor(Math.log10(n));
+  const fraction = n / Math.pow(10, exp);
+  let nice;
+  if(fraction < 1.5) nice = 1;
+  else if(fraction < 3.5) nice = 2;
+  else if(fraction < 7.5) nice = 5;
+  else nice = 10;
+  return nice * Math.pow(10, exp);
 }
 
 function computeParams(chitVal, nMem, nMon) {
-  const ifLift   = Math.round(chitVal * 1.2 / nMem);
-  const startAmt = ifLift;
-  const rawStep  = startAmt / (2*(nMon-1));
-  const step     = roundClean(rawStep) || 1;
-  return {ifLift, startAmt, step};
+  const fixedRate = Math.round(chitVal * 1.2 / nMem);
+  const startAmt  = fixedRate;
+  const rawStep   = startAmt / (2*(nMon-1));
+  const step      = roundClean(rawStep) || 1;
+  return {fixedRate, startAmt, step};
 }
 
-function notLift(month, overrides) {
+// Get the "not yet lifted" rate for a given month
+function notLiftRate(month, overrides) {
   if(overrides[month-1] !== null && overrides[month-1] !== undefined) return overrides[month-1];
   return Math.max(0, S.startAmt - (month-1)*S.step);
 }
-function ifLiftVal(month, overrides) {
+
+// Get the fixed rate for already-lifted members for a given month
+function fixedRateVal(month, overrides) {
   if(overrides[month-1] !== null && overrides[month-1] !== undefined) return overrides[month-1];
-  return S.ifLift;
+  return S.fixedRate;
 }
 
-// Pool collected in month m given who is lifting
+// Pool collected in month m using NEW formula:
+// Pool = (remaining members including lifter) × currentRate + (already lifted) × fixedRate
 function poolForMonth(m) {
-  const lm = notLift(m, S.manualNotLift);
-  const li = ifLiftVal(m, S.manualIfLift);
-  return (S.nMem-1)*lm + li; // (members-1) not-lifting + 1 lifting
+  const alreadyLifted = m - 1;                    // members who lifted in months 1..(m-1)
+  const remaining     = S.nMem - alreadyLifted;   // members not yet lifted (includes this month's lifter)
+  const currentRate   = notLiftRate(m, S.manualNotLift);
+  const fRate         = fixedRateVal(m, S.manualFixed);
+  return remaining * currentRate + alreadyLifted * fRate;
 }
 
 function getCalMonths() {
@@ -446,7 +588,8 @@ function getCalMonths() {
   const arr=[];
   for(let i=0;i<S.nMon;i++){
     arr.push(MONTH_NAMES[mi%12]+' '+y);
-    mi++; if(mi%12===0&&i<S.nMon-1) y++;
+    mi++;
+    if(mi%12===0 && i<S.nMon-1) y++;
   }
   return arr;
 }
@@ -458,20 +601,21 @@ function onCfgChange(){
   const cv=parseInt(document.getElementById('cfgVal').value)||10000;
   const nm=parseInt(document.getElementById('cfgMem').value)||10;
   const mon=parseInt(document.getElementById('cfgMon').value)||10;
-  const {ifLift,startAmt,step}=computeParams(cv,nm,mon);
-  // live preview in formula bar
-  document.getElementById('fbar').innerHTML=fbarHTML(cv,nm,mon,ifLift,startAmt,step);
+  const {fixedRate,startAmt,step}=computeParams(cv,nm,mon);
+  document.getElementById('fbar').innerHTML=fbarHTML(cv,nm,mon,fixedRate,startAmt,step);
 }
 
-function fbarHTML(cv,nm,mon,ifLift,startAmt,step){
+function fbarHTML(cv,nm,mon,fixedRate,startAmt,step){
   const last=Math.max(0,startAmt-(mon-1)*step);
+  const pool1 = nm * startAmt; // Month 1: all members pay startAmt
+  const poolLast = 1*last + (mon-1)*fixedRate; // Last month
   return `
     <div class="fi"><div class="fi-l">Chit Value</div><div class="fi-v">${fmt(cv)}</div><div class="fi-s">${nm} members × ${mon} months</div></div>
-    <div class="fi"><div class="fi-l">If Lift (Fixed)</div><div class="fi-v">${fmt(ifLift)}</div><div class="fi-s">= ChitVal×1.2÷Members</div></div>
-    <div class="fi"><div class="fi-l">Not Lift — Month 1</div><div class="fi-v">${fmt(startAmt)}</div><div class="fi-s">Starting contribution</div></div>
+    <div class="fi"><div class="fi-l">Fixed Rate (Lifted)</div><div class="fi-v">${fmt(fixedRate)}</div><div class="fi-s">= ChitVal×1.2÷Members</div></div>
+    <div class="fi"><div class="fi-l">Month 1 Rate</div><div class="fi-v">${fmt(startAmt)}</div><div class="fi-s">Starting contribution</div></div>
     <div class="fi"><div class="fi-l">Monthly Drop</div><div class="fi-v">−${fmt(step)}</div><div class="fi-s">Per month reduction</div></div>
-    <div class="fi"><div class="fi-l">Not Lift — Month ${mon}</div><div class="fi-v">${fmt(last)}</div><div class="fi-s">Lowest contribution</div></div>
-    <div class="fi"><div class="fi-l">Monthly Pool (M1)</div><div class="fi-v">${fmt((nm-1)*startAmt+ifLift)}</div><div class="fi-s">First month total</div></div>
+    <div class="fi"><div class="fi-l">Month ${mon} Rate</div><div class="fi-v">${fmt(last)}</div><div class="fi-s">Lowest contribution</div></div>
+    <div class="fi"><div class="fi-l">Pool — Month 1</div><div class="fi-v">${fmt(pool1)}</div><div class="fi-s">${nm} × ${fmtN(startAmt)}</div></div>
   `;
 }
 
@@ -484,13 +628,13 @@ function build() {
   S.nMon    = parseInt(document.getElementById('cfgMon').value)||10;
 
   const p = computeParams(S.chitVal, S.nMem, S.nMon);
-  S.ifLift   = p.ifLift;
-  S.startAmt = p.startAmt;
-  S.step     = p.step;
+  S.fixedRate = p.fixedRate;
+  S.startAmt  = p.startAmt;
+  S.step      = p.step;
 
   // Init manual overrides if needed
   if(S.manualNotLift.length !== S.nMon) S.manualNotLift = Array(S.nMon).fill(null);
-  if(S.manualIfLift.length  !== S.nMon) S.manualIfLift  = Array(S.nMon).fill(null);
+  if(S.manualFixed.length   !== S.nMon) S.manualFixed   = Array(S.nMon).fill(null);
 
   // Init members if needed
   if(S.members.length !== S.nMem){
@@ -509,7 +653,7 @@ function build() {
   document.getElementById('pillMon').textContent  = S.nMon+' MONTHS';
 
   // Formula bar
-  document.getElementById('fbar').innerHTML = fbarHTML(S.chitVal,S.nMem,S.nMon,S.ifLift,S.startAmt,S.step);
+  document.getElementById('fbar').innerHTML = fbarHTML(S.chitVal,S.nMem,S.nMon,S.fixedRate,S.startAmt,S.step);
 
   buildContribTab();
   buildScheduleTab();
@@ -539,31 +683,42 @@ function updateProfitBanner(){
 }
 
 // ═══════════════════════════════════════════════════════════
-// CONTRIBUTION TAB
+// CONTRIBUTION TAB — UPDATED LOGIC
 // ═══════════════════════════════════════════════════════════
 function buildContribTab(){
   const tb=document.getElementById('contribBody');
   tb.innerHTML='';
   let grandPool=0, grandGain=0;
+
   for(let m=1;m<=S.nMon;m++){
-    const nl  = notLift(m, S.manualNotLift);
-    const il  = ifLiftVal(m, S.manualIfLift);
-    const pool= (S.nMem-1)*nl + il;
-    const gain= pool - S.chitVal;
+    const alreadyLifted = m - 1;
+    const remaining     = S.nMem - alreadyLifted;
+    const nlRate        = notLiftRate(m, S.manualNotLift);
+    const fRate         = fixedRateVal(m, S.manualFixed);
+    const pool          = remaining * nlRate + alreadyLifted * fRate;
+    const gain          = pool - S.chitVal;
     grandPool+=pool; grandGain+=gain;
+
     const nlManual = S.manualNotLift[m-1]!==null;
-    const ilManual = S.manualIfLift[m-1]!==null;
+    const fManual  = S.manualFixed[m-1]!==null;
+
     const tr=document.createElement('tr');
     tr.className=m%2===0?'ev':'od';
     tr.innerHTML=`
-      <td><span class="mnum">${m}</span><br><small style="font-size:10px;color:#666">${S.calMonths[m-1]||''}</small></td>
       <td>
-        <input type="number" class="adj-inp ${nlManual?'manual':'auto'}" id="nl${m}" value="${nl}"
-          onchange="manualChange('nl',${m},this)" onblur="manualChange('nl',${m},this)">
+        <span class="mnum">${m}</span><br>
+        <small style="font-size:10px;color:#666">${S.calMonths[m-1]||''}</small><br>
+        <small style="font-size:9px;color:#999">${remaining} unlift + ${alreadyLifted} lifted</small>
       </td>
       <td>
-        <input type="number" class="adj-inp ${ilManual?'manual':'auto'}" id="il${m}" value="${il}"
-          onchange="manualChange('il',${m},this)" onblur="manualChange('il',${m},this)">
+        <input type="number" class="adj-inp ${nlManual?'manual':'auto'}" id="nl${m}" value="${nlRate}"
+          onchange="manualChange('nl',${m},this)" onblur="manualChange('nl',${m},this)">
+        <small style="font-size:9px;color:#666">× ${remaining} members</small>
+      </td>
+      <td>
+        <input type="number" class="adj-inp ${fManual?'manual':'auto'}" id="fx${m}" value="${fRate}"
+          onchange="manualChange('fx',${m},this)" onblur="manualChange('fx',${m},this)">
+        <small style="font-size:9px;color:#666">× ${alreadyLifted} members</small>
       </td>
       <td class="mono cn"><strong>${fmtN(pool)}</strong></td>
       <td class="mono">${fmtN(S.chitVal)}</td>
@@ -571,6 +726,7 @@ function buildContribTab(){
     `;
     tb.appendChild(tr);
   }
+
   const gGain=grandPool-S.nMon*S.chitVal;
   document.getElementById('contribFoot').innerHTML=`
     <tr class="tot-r">
@@ -588,8 +744,8 @@ function manualChange(type, month, el){
     S.manualNotLift[month-1] = isNaN(val)?null:val;
     el.className='adj-inp '+(S.manualNotLift[month-1]!==null?'manual':'auto');
   } else {
-    S.manualIfLift[month-1] = isNaN(val)?null:val;
-    el.className='adj-inp '+(S.manualIfLift[month-1]!==null?'manual':'auto');
+    S.manualFixed[month-1] = isNaN(val)?null:val;
+    el.className='adj-inp '+(S.manualFixed[month-1]!==null?'manual':'auto');
   }
   buildContribTab();
   buildScheduleTab();
@@ -599,7 +755,7 @@ function manualChange(type, month, el){
 
 function resetAllManual(){
   S.manualNotLift=Array(S.nMon).fill(null);
-  S.manualIfLift=Array(S.nMon).fill(null);
+  S.manualFixed=Array(S.nMon).fill(null);
   buildContribTab();
   buildScheduleTab();
   buildSummaryTab();
@@ -613,14 +769,17 @@ function buildScheduleTab(){
   const tb=document.getElementById('schedBody');
   tb.innerHTML='';
   let cumProfit=0, grandPool=0, grandPaid=0;
+
   for(let m=1;m<=S.nMon;m++){
     const pool=poolForMonth(m);
     const gain=pool-S.chitVal;
     cumProfit+=gain;
     grandPool+=pool; grandPaid+=S.chitVal;
+
     // Find who lifts this month
     const lifter=S.members.find(mem=>mem.liftMonth===m);
     const lifterName=lifter?lifter.name:'<span class="chip chip-r">UNASSIGNED</span>';
+
     const tr=document.createElement('tr');
     tr.className=m%2===0?'ev':'od';
     tr.innerHTML=`
@@ -634,6 +793,7 @@ function buildScheduleTab(){
     `;
     tb.appendChild(tr);
   }
+
   const gProfit=grandPool-grandPaid;
   document.getElementById('schedFoot').innerHTML=`
     <tr class="tot-r">
@@ -646,23 +806,39 @@ function buildScheduleTab(){
 }
 
 // ═══════════════════════════════════════════════════════════
-// MEMBERS TAB
+// MEMBERS TAB — UPDATED FOR NEW CALCULATION
 // ═══════════════════════════════════════════════════════════
+function memberTotalContribution(liftMonth) {
+  // Member pays:
+  //   - Months before lift (1..liftMonth): notLiftRate for each month
+  //   - Months after lift (liftMonth+1..nMon): fixedRate for each month
+  let total = 0;
+  for(let m=1; m<=S.nMon; m++){
+    if(m <= liftMonth){
+      // Not yet lifted (including the month they lift)
+      total += notLiftRate(m, S.manualNotLift);
+    } else {
+      // Already lifted — pay fixed rate
+      total += fixedRateVal(m, S.manualFixed);
+    }
+  }
+  return total;
+}
+
 function buildMembersTab(){
   const tb=document.getElementById('memBody');
   tb.innerHTML='';
-  // Compute per-member total contribution
+
   for(let i=0;i<S.nMem;i++){
     const mem=S.members[i];
-    let total=0;
-    for(let m=1;m<=S.nMon;m++){
-      total += mem.liftMonth===m ? ifLiftVal(m,S.manualIfLift) : notLift(m,S.manualNotLift);
-    }
-    const net=S.chitVal-total;
+    const total = memberTotalContribution(mem.liftMonth);
+    const net = S.chitVal - total;
+
     const monthOpts=Array.from({length:S.nMon},(_,mi)=>{
       const taken=S.members.findIndex((mm,ii)=>ii!==i&&mm.liftMonth===mi+1)>=0;
       return `<option value="${mi+1}" ${mem.liftMonth===mi+1?'selected':''}>${S.calMonths[mi]||'M'+(mi+1)}${taken?' (taken)':''}</option>`;
     }).join('');
+
     const tr=document.createElement('tr');
     tr.className=i%2===0?'ev':'od';
     tr.innerHTML=`
@@ -683,28 +859,20 @@ function buildMembersTab(){
 }
 
 // ═══════════════════════════════════════════════════════════
-// SUMMARY TAB
+// SUMMARY TAB — UPDATED FOR NEW CALCULATION
 // ═══════════════════════════════════════════════════════════
 function buildSummaryTab(){
   const tb=document.getElementById('sumBody');
   tb.innerHTML='';
-  // M1 cost = sum of all not-lift amounts for month 1 × nMon if lifted M1
-  // Actually: effective cost = total they paid = chitVal received - total_paid_over_months
-  // Savings vs lifting M1: what they'd have paid if lifted M1
-  const m1cost = ifLiftVal(1,S.manualIfLift);
-  let totalNotLiftAllMonths=[];
-  for(let m=1;m<=S.nMon;m++) totalNotLiftAllMonths.push(notLift(m,S.manualNotLift));
 
   for(let i=0;i<S.nMem;i++){
     const mem=S.members[i];
-    let total=0;
-    let m1Total=0; // what this member would pay if they lifted M1
-    for(let m=1;m<=S.nMon;m++){
-      total += mem.liftMonth===m ? ifLiftVal(m,S.manualIfLift) : notLift(m,S.manualNotLift);
-      m1Total += m===1 ? ifLiftVal(1,S.manualIfLift) : notLift(m,S.manualNotLift);
-    }
-    const net=S.chitVal-total;
-    const savings=m1Total-total;
+    const total = memberTotalContribution(mem.liftMonth);
+    const m1Total = memberTotalContribution(1); // what they'd pay if lifted M1
+
+    const net = S.chitVal - total;
+    const savings = m1Total - total;
+
     const tr=document.createElement('tr');
     tr.className=i%2===0?'ev':'od';
     tr.innerHTML=`
@@ -719,6 +887,581 @@ function buildSummaryTab(){
     `;
     tb.appendChild(tr);
   }
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHIT BUILDER
+// ═══════════════════════════════════════════════════════════
+let CB = {
+  columns: [
+    {id:'month', name:'Month', type:'core', removable:false},
+    {id:'contrib_notlift', name:'If Not Lifted', type:'core', removable:false, group:'Monthly Contribution'},
+    {id:'contrib_lifted', name:'If Lifted', type:'core', removable:false, group:'Monthly Contribution'},
+    {id:'payment', name:'Payment per Month', type:'core', removable:false}
+  ],
+  rows: 10,
+  data: {} // data[rowIdx][colId] = value
+};
+
+function cbInit() {
+  CB.data = {};
+  for(let r=0; r<CB.rows; r++){
+    CB.data[r] = {};
+    CB.data[r]['month'] = r+1;
+  }
+  cbRender();
+}
+
+function cbRender() {
+  const thead = document.getElementById('cbThead');
+  const tbody = document.getElementById('cbTbody');
+  thead.innerHTML = '';
+  tbody.innerHTML = '';
+
+  // Determine grouped columns and build header rows
+  // Row 1: Group headers (with colspan for grouped columns)
+  // Row 2: Individual column headers
+  const groups = [];
+  let i = 0;
+  while(i < CB.columns.length) {
+    const col = CB.columns[i];
+    if(col.group) {
+      // Find all consecutive columns with same group
+      let count = 0;
+      const groupName = col.group;
+      let j = i;
+      while(j < CB.columns.length && CB.columns[j].group === groupName) {
+        count++;
+        j++;
+      }
+      groups.push({name: groupName, span: count, startIdx: i});
+      i = j;
+    } else {
+      groups.push({name: col.name, span: 1, startIdx: i, single: true});
+      i++;
+    }
+  }
+
+  // Header row 1 (groups)
+  const tr1 = document.createElement('tr');
+  groups.forEach(g => {
+    const th = document.createElement('th');
+    th.className = g.single ? 'th-gd' : 'th-nv';
+    th.colSpan = g.span;
+    if(g.single) {
+      th.rowSpan = 2;
+    }
+    th.textContent = g.name;
+    tr1.appendChild(th);
+  });
+  thead.appendChild(tr1);
+
+  // Header row 2 (sub-columns for groups)
+  const hasSubHeaders = groups.some(g => !g.single);
+  if(hasSubHeaders) {
+    const tr2 = document.createElement('tr');
+    tr2.className = 'cb-sub-header';
+    groups.forEach(g => {
+      if(!g.single) {
+        for(let k = g.startIdx; k < g.startIdx + g.span; k++) {
+          const col = CB.columns[k];
+          const th = document.createElement('th');
+          th.style.position = 'relative';
+          if(col.removable) {
+            th.innerHTML = `${col.name} <button class="cb-col-remove" onclick="cbRemoveColumnById('${col.id}')" title="Remove column">×</button>`;
+          } else {
+            th.textContent = col.name;
+          }
+          tr2.appendChild(th);
+        }
+      }
+    });
+    thead.appendChild(tr2);
+  }
+
+  // Add remove buttons to non-grouped removable columns in header row 1
+  let thIdx = 0;
+  groups.forEach(g => {
+    if(g.single) {
+      const col = CB.columns[g.startIdx];
+      const th = tr1.children[thIdx];
+      if(col.removable) {
+        th.style.position = 'relative';
+        th.innerHTML = `${col.name} <button class="cb-col-remove" onclick="cbRemoveColumnById('${col.id}')" title="Remove column">×</button>`;
+      }
+    }
+    thIdx++;
+  });
+
+  // Body rows
+  for(let r=0; r<CB.rows; r++) {
+    const tr = document.createElement('tr');
+    tr.className = r%2===0 ? 'ev' : 'od';
+
+    CB.columns.forEach(col => {
+      const td = document.createElement('td');
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.className = 'cb-input';
+      inp.value = CB.data[r] && CB.data[r][col.id] !== undefined ? CB.data[r][col.id] : '';
+      inp.placeholder = col.id === 'month' ? (r+1).toString() : '—';
+      inp.dataset.row = r;
+      inp.dataset.col = col.id;
+      inp.addEventListener('input', function(){
+        if(!CB.data[this.dataset.row]) CB.data[this.dataset.row] = {};
+        CB.data[this.dataset.row][this.dataset.col] = this.value;
+      });
+      td.appendChild(inp);
+      tr.appendChild(td);
+    });
+
+    // Remove row button
+    const tdAction = document.createElement('td');
+    tdAction.style.border = 'none';
+    tdAction.style.background = 'transparent';
+    tdAction.style.padding = '2px';
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'cb-row-remove';
+    removeBtn.textContent = '×';
+    removeBtn.title = 'Remove this row';
+    removeBtn.onclick = function(){ cbRemoveRowAt(r); };
+    tdAction.appendChild(removeBtn);
+    tr.appendChild(tdAction);
+
+    tbody.appendChild(tr);
+  }
+}
+
+function cbAddRow() {
+  const r = CB.rows;
+  CB.data[r] = {};
+  CB.data[r]['month'] = r+1;
+  CB.rows++;
+  cbRender();
+}
+
+function cbRemoveRow() {
+  if(CB.rows <= 1) return;
+  CB.rows--;
+  delete CB.data[CB.rows];
+  cbRender();
+}
+
+function cbRemoveRowAt(idx) {
+  if(CB.rows <= 1) return;
+  // Shift data down
+  for(let r=idx; r<CB.rows-1; r++){
+    CB.data[r] = CB.data[r+1] || {};
+  }
+  delete CB.data[CB.rows-1];
+  CB.rows--;
+  cbRender();
+}
+
+function cbSetRows() {
+  const num = prompt('Enter the number of rows:', CB.rows);
+  if(num === null) return;
+  const n = parseInt(num);
+  if(isNaN(n) || n < 1 || n > 200) { alert('Please enter a valid number (1-200)'); return; }
+  // Add or remove rows
+  if(n > CB.rows) {
+    for(let r=CB.rows; r<n; r++){
+      CB.data[r] = {};
+      CB.data[r]['month'] = r+1;
+    }
+  } else {
+    for(let r=n; r<CB.rows; r++){
+      delete CB.data[r];
+    }
+  }
+  CB.rows = n;
+  cbRender();
+}
+
+function cbAddColumn() {
+  const name = prompt('Enter column name:');
+  if(!name || !name.trim()) return;
+
+  // Ask if it should be part of an existing group or standalone
+  const groupOptions = [...new Set(CB.columns.filter(c=>c.group).map(c=>c.group))];
+  let group = null;
+
+  if(groupOptions.length > 0) {
+    const choice = prompt(
+      'Add to an existing group? Enter group name or leave blank for standalone.\n\nExisting groups: ' +
+      groupOptions.join(', ')
+    );
+    if(choice && groupOptions.includes(choice.trim())) {
+      group = choice.trim();
+    }
+  }
+
+  const id = 'custom_' + Date.now() + '_' + Math.random().toString(36).substr(2,4);
+  const newCol = {id, name: name.trim(), type:'custom', removable:true};
+  if(group) newCol.group = group;
+
+  // If grouped, insert after the last column of that group
+  if(group) {
+    let lastIdx = -1;
+    CB.columns.forEach((c,i) => { if(c.group === group) lastIdx = i; });
+    if(lastIdx >= 0) {
+      CB.columns.splice(lastIdx+1, 0, newCol);
+    } else {
+      CB.columns.push(newCol);
+    }
+  } else {
+    CB.columns.push(newCol);
+  }
+
+  cbRender();
+}
+
+function cbRemoveColumn() {
+  const removable = CB.columns.filter(c => c.removable);
+  if(removable.length === 0) { alert('No custom columns to remove. Core columns cannot be removed.'); return; }
+
+  const names = removable.map(c => c.name);
+  const choice = prompt('Enter the name of the column to remove:\n\nRemovable columns: ' + names.join(', '));
+  if(!choice) return;
+
+  const col = removable.find(c => c.name.toLowerCase() === choice.trim().toLowerCase());
+  if(!col) { alert('Column not found: ' + choice); return; }
+  cbRemoveColumnById(col.id);
+}
+
+function cbRemoveColumnById(id) {
+  const idx = CB.columns.findIndex(c => c.id === id);
+  if(idx < 0) return;
+  if(!CB.columns[idx].removable) { alert('Core columns cannot be removed.'); return; }
+  // Remove data for this column
+  for(let r=0; r<CB.rows; r++){
+    if(CB.data[r]) delete CB.data[r][id];
+  }
+  CB.columns.splice(idx, 1);
+  cbRender();
+}
+
+function cbClearAll() {
+  if(!confirm('Clear all data in the Chit Builder? This cannot be undone.')) return;
+  CB.data = {};
+  for(let r=0; r<CB.rows; r++){
+    CB.data[r] = {};
+    CB.data[r]['month'] = r+1;
+  }
+  cbRender();
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHIT BUILDER — JPEG DOWNLOAD (HIGH RESOLUTION)
+// ═══════════════════════════════════════════════════════════
+let cbImageDataUrl = null;
+
+function restoreTableAfterCapture(inputs, inputData, removeButtons, colRemoveButtons, rows) {
+  inputs.forEach((inp, i) => {
+    inp.style.display = inputData[i].display || '';
+    const span = inp.parentNode.querySelector('.cb-capture-span');
+    if(span) span.remove();
+  });
+  removeButtons.forEach(b => b.style.display = '');
+  colRemoveButtons.forEach(b => b.style.display = '');
+  rows.forEach(tr => {
+    const lastTd = tr.lastElementChild;
+    if(lastTd && lastTd.querySelector('.cb-row-remove')) {
+      lastTd.style.display = '';
+    }
+  });
+}
+
+function renderTableToCanvas(tableWrap) {
+  // Pure canvas-based table rendering (no html2canvas needed)
+  // This avoids cross-origin iframe issues that html2canvas has with file:// protocol
+  const table = tableWrap.querySelector('table');
+  if(!table) return null;
+
+  const scale = 2; // High-res multiplier
+  const cellPadX = 14;
+  const cellPadY = 10;
+  const fontSize = 13;
+  const headerFontSize = 14;
+  const font = fontSize + 'px sans-serif';
+  const headerFont = 'bold ' + headerFontSize + 'px sans-serif';
+  const borderColor = '#ccc';
+
+  // Measure text helper
+  const measureCanvas = document.createElement('canvas');
+  const measureCtx = measureCanvas.getContext('2d');
+
+  function measureText(text, f) {
+    measureCtx.font = f || font;
+    return measureCtx.measureText(text).width;
+  }
+
+  // Extract table data
+  const headerRows = [];
+  const theadEl = table.querySelector('thead');
+  if(theadEl) {
+    theadEl.querySelectorAll('tr').forEach(tr => {
+      const cells = [];
+      tr.querySelectorAll('th').forEach(th => {
+        cells.push({
+          text: th.textContent.trim(),
+          colspan: th.colSpan || 1,
+          rowspan: th.rowSpan || 1,
+          bg: getComputedStyle(th).backgroundColor,
+          color: getComputedStyle(th).color
+        });
+      });
+      headerRows.push(cells);
+    });
+  }
+
+  const bodyRows = [];
+  const tbodyEl = table.querySelector('tbody');
+  if(tbodyEl) {
+    tbodyEl.querySelectorAll('tr').forEach(tr => {
+      const cells = [];
+      const tds = tr.querySelectorAll('td');
+      // Skip the last td if it contains a remove button
+      tds.forEach((td, idx) => {
+        if(td.querySelector('.cb-row-remove')) return; // Skip action column
+        const input = td.querySelector('.cb-input');
+        const text = input ? (input.value || input.placeholder || '—') : td.textContent.trim();
+        cells.push({
+          text: text,
+          bg: getComputedStyle(td).backgroundColor,
+          color: input && input.value ? '#111' : (input ? '#999' : getComputedStyle(td).color)
+        });
+      });
+      bodyRows.push(cells);
+    });
+  }
+
+  if(bodyRows.length === 0) return null;
+
+  // Determine number of actual data columns (from body rows)
+  const numCols = bodyRows.length > 0 ? bodyRows[0].length : 0;
+  if(numCols === 0) return null;
+
+  // Calculate column widths
+  const colWidths = Array(numCols).fill(60);
+  // Check header widths (use first header row, accounting for colspan)
+  headerRows.forEach(row => {
+    let colIdx = 0;
+    row.forEach(cell => {
+      const w = measureText(cell.text, headerFont) + cellPadX * 2;
+      const perCol = w / cell.colspan;
+      for(let c = colIdx; c < colIdx + cell.colspan && c < numCols; c++) {
+        colWidths[c] = Math.max(colWidths[c], perCol);
+      }
+      colIdx += cell.colspan;
+    });
+  });
+  // Check body widths
+  bodyRows.forEach(row => {
+    row.forEach((cell, c) => {
+      if(c < numCols) {
+        const w = measureText(cell.text, font) + cellPadX * 2;
+        colWidths[c] = Math.max(colWidths[c], w);
+      }
+    });
+  });
+
+  const rowHeight = fontSize + cellPadY * 2;
+  const headerRowHeight = headerFontSize + cellPadY * 2;
+  const totalWidth = colWidths.reduce((a,b) => a+b, 0);
+  const totalHeight = headerRows.length * headerRowHeight + bodyRows.length * rowHeight;
+
+  // Create canvas
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.ceil(totalWidth * scale);
+  canvas.height = Math.ceil(totalHeight * scale);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(scale, scale);
+
+  // Fill background
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, totalWidth, totalHeight);
+
+  // Draw header rows
+  let y = 0;
+  headerRows.forEach(row => {
+    let x = 0;
+    let colIdx = 0;
+    row.forEach(cell => {
+      // Calculate cell width based on colspan
+      let cellW = 0;
+      for(let c = colIdx; c < colIdx + cell.colspan && c < numCols; c++) {
+        cellW += colWidths[c];
+      }
+      // Calculate cell height based on rowspan
+      const cellH = cell.rowspan * headerRowHeight;
+
+      // Background
+      ctx.fillStyle = cell.bg || '#1B4332';
+      ctx.fillRect(x, y, cellW, cellH);
+
+      // Border
+      ctx.strokeStyle = borderColor;
+      ctx.lineWidth = 0.5;
+      ctx.strokeRect(x, y, cellW, cellH);
+
+      // Text
+      ctx.fillStyle = cell.color || '#F5C800';
+      ctx.font = headerFont;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(cell.text, x + cellW/2, y + headerRowHeight/2, cellW - cellPadX);
+
+      x += cellW;
+      colIdx += cell.colspan;
+    });
+    y += headerRowHeight;
+  });
+
+  // Draw body rows
+  bodyRows.forEach(row => {
+    let x = 0;
+    row.forEach((cell, c) => {
+      if(c >= numCols) return;
+      const cellW = colWidths[c];
+
+      // Background
+      ctx.fillStyle = cell.bg || '#fff';
+      ctx.fillRect(x, y, cellW, rowHeight);
+
+      // Border
+      ctx.strokeStyle = borderColor;
+      ctx.lineWidth = 0.5;
+      ctx.strokeRect(x, y, cellW, rowHeight);
+
+      // Text
+      ctx.fillStyle = cell.color || '#111';
+      ctx.font = font;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(cell.text, x + cellW/2, y + rowHeight/2, cellW - cellPadX);
+
+      x += cellW;
+    });
+    y += rowHeight;
+  });
+
+  return canvas;
+}
+
+function downloadBuilderImage() {
+  const tableWrap = document.getElementById('cbTableWrap');
+  if(!tableWrap) return;
+
+  // Try html2canvas first, fall back to manual canvas rendering
+  var useManualCanvas = false;
+
+  // Check if we're on file:// protocol or in an iframe context that blocks html2canvas
+  if(window.location.protocol === 'file:' || window.location.origin === 'null') {
+    useManualCanvas = true;
+  }
+
+  if(!useManualCanvas && typeof html2canvas !== 'undefined') {
+    // Temporarily remove input styling for clean capture
+    const inputs = tableWrap.querySelectorAll('.cb-input');
+    const removeButtons = tableWrap.querySelectorAll('.cb-row-remove');
+    const colRemoveButtons = tableWrap.querySelectorAll('.cb-col-remove');
+
+    removeButtons.forEach(b => b.style.display = 'none');
+    colRemoveButtons.forEach(b => b.style.display = 'none');
+
+    const inputData = [];
+    inputs.forEach(inp => {
+      inputData.push({el: inp, display: inp.style.display});
+      const span = document.createElement('span');
+      span.textContent = inp.value || inp.placeholder || '—';
+      span.style.fontFamily = "'JetBrains Mono', monospace";
+      span.style.fontSize = '13px';
+      span.style.fontWeight = '600';
+      span.style.color = inp.value ? '#111' : '#999';
+      span.className = 'cb-capture-span';
+      inp.parentNode.insertBefore(span, inp);
+      inp.style.display = 'none';
+    });
+
+    const rows = tableWrap.querySelectorAll('tbody tr');
+    rows.forEach(tr => {
+      const lastTd = tr.lastElementChild;
+      if(lastTd && lastTd.querySelector('.cb-row-remove')) {
+        lastTd.style.display = 'none';
+      }
+    });
+
+    try {
+      html2canvas(tableWrap, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        allowTaint: true,
+        foreignObjectRendering: false
+      }).then(function(canvas) {
+        restoreTableAfterCapture(inputs, inputData, removeButtons, colRemoveButtons, rows);
+        try {
+          cbImageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+          document.getElementById('cbPreviewImg').src = cbImageDataUrl;
+          document.getElementById('cbPreviewOverlay').classList.add('show');
+        } catch(e) {
+          console.error('toDataURL failed:', e);
+          // Fallback to manual canvas
+          manualCanvasCapture();
+        }
+      }).catch(function(err) {
+        console.error('html2canvas failed, using fallback:', err);
+        restoreTableAfterCapture(inputs, inputData, removeButtons, colRemoveButtons, rows);
+        // Fallback to manual canvas
+        manualCanvasCapture();
+      });
+    } catch(e) {
+      console.error('html2canvas error, using fallback:', e);
+      restoreTableAfterCapture(inputs, inputData, removeButtons, colRemoveButtons, rows);
+      manualCanvasCapture();
+    }
+  } else {
+    // Use manual canvas rendering directly
+    manualCanvasCapture();
+  }
+}
+
+function manualCanvasCapture() {
+  const tableWrap = document.getElementById('cbTableWrap');
+  if(!tableWrap) return;
+
+  try {
+    const canvas = renderTableToCanvas(tableWrap);
+    if(!canvas) {
+      alert('No table data to capture.');
+      return;
+    }
+    cbImageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+    document.getElementById('cbPreviewImg').src = cbImageDataUrl;
+    document.getElementById('cbPreviewOverlay').classList.add('show');
+  } catch(e) {
+    console.error('Manual canvas capture failed:', e);
+    alert('Failed to capture image: ' + (e.message || e));
+  }
+}
+
+function saveBuilderImage() {
+  if(!cbImageDataUrl) return;
+  const a = document.createElement('a');
+  a.href = cbImageDataUrl;
+  a.download = 'KumarChits_ChitBuilder.jpg';
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  closePreview();
+}
+
+function closePreview(e) {
+  if(e && e.target !== document.getElementById('cbPreviewOverlay')) return;
+  document.getElementById('cbPreviewOverlay').classList.remove('show');
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -737,17 +1480,19 @@ function downloadCSV(type){
     rows.push(['KUMAR CHITS — CONTRIBUTION TABLE']);
     rows.push([`Chit: ${chitName}`, `Value: ${fmt(S.chitVal)}`, `Members: ${S.nMem}`, `Months: ${S.nMon}`]);
     rows.push([]);
-    rows.push(['Month','Calendar','Not Lift (₹)','If Lift (₹)','Pool Collected (₹)','Paid to Lifter (₹)','Organiser Gain (₹)']);
+    rows.push(['Month','Calendar','Not Yet Lifted Rate (₹)','Already Lifted Rate (₹)','Remaining Members','Lifted Members','Pool Collected (₹)','Paid to Lifter (₹)','Organiser Gain (₹)']);
     for(let m=1;m<=S.nMon;m++){
-      const nl=notLift(m,S.manualNotLift);
-      const il=ifLiftVal(m,S.manualIfLift);
-      const pool=(S.nMem-1)*nl+il;
+      const alreadyLifted = m - 1;
+      const remaining = S.nMem - alreadyLifted;
+      const nl=notLiftRate(m,S.manualNotLift);
+      const fl=fixedRateVal(m,S.manualFixed);
+      const pool=remaining*nl + alreadyLifted*fl;
       const gain=pool-S.chitVal;
-      rows.push([m, S.calMonths[m-1]||'', nl, il, pool, S.chitVal, gain]);
+      rows.push([m, S.calMonths[m-1]||'', nl, fl, remaining, alreadyLifted, pool, S.chitVal, gain]);
     }
     let grandPool=0;
     for(let m=1;m<=S.nMon;m++) grandPool+=poolForMonth(m);
-    rows.push(['TOTAL','','','',grandPool, S.nMon*S.chitVal, grandPool-S.nMon*S.chitVal]);
+    rows.push(['TOTAL','','','','','',grandPool, S.nMon*S.chitVal, grandPool-S.nMon*S.chitVal]);
     rows.push([]);
   }
 
@@ -771,8 +1516,7 @@ function downloadCSV(type){
     rows.push(['#','Name','Phone','Lifts Month','Calendar Month','Total Paid (₹)','Received (₹)','Net (₹)']);
     for(let i=0;i<S.nMem;i++){
       const mem=S.members[i];
-      let total=0;
-      for(let m=1;m<=S.nMon;m++) total += mem.liftMonth===m ? ifLiftVal(m,S.manualIfLift) : notLift(m,S.manualNotLift);
+      const total = memberTotalContribution(mem.liftMonth);
       const net=S.chitVal-total;
       rows.push([i+1, mem.name, mem.phone||'—', mem.liftMonth, S.calMonths[mem.liftMonth-1]||'', total, S.chitVal, net]);
     }
@@ -785,11 +1529,8 @@ function downloadCSV(type){
     rows.push(['#','Member','Lifts Month','Total Paid (₹)','Received (₹)','Net Gain/Loss (₹)','Effective Cost (₹)','Savings vs M1 (₹)']);
     for(let i=0;i<S.nMem;i++){
       const mem=S.members[i];
-      let total=0, m1total=0;
-      for(let m=1;m<=S.nMon;m++){
-        total  += mem.liftMonth===m ? ifLiftVal(m,S.manualIfLift) : notLift(m,S.manualNotLift);
-        m1total += m===1 ? ifLiftVal(1,S.manualIfLift) : notLift(m,S.manualNotLift);
-      }
+      const total = memberTotalContribution(mem.liftMonth);
+      const m1total = memberTotalContribution(1);
       rows.push([i+1,mem.name,'M'+mem.liftMonth+' '+S.calMonths[mem.liftMonth-1],total,S.chitVal,S.chitVal-total,total,m1total-total]);
     }
     rows.push([]);
@@ -805,17 +1546,21 @@ function downloadCSV(type){
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
   a.download=filename;
+  a.style.display='none';
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
 }
 
 // ═══════════════════════════════════════════════════════════
 // TABS
 // ═══════════════════════════════════════════════════════════
-function showTab(id){
+function showTab(id, btn){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+id).classList.add('active');
-  event.currentTarget.classList.add('active');
+  if(btn) btn.classList.add('active');
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -823,6 +1568,7 @@ function showTab(id){
 // ═══════════════════════════════════════════════════════════
 build();
 onCfgChange();
+cbInit();
 </script>
 </body>
 </html>
