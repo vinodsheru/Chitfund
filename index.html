@@ -1,1574 +1,453 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kumar Chits — Organiser Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;500;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script>
-// Polyfill: If html2canvas fails due to cross-origin iframe issues (file:// protocol),
-// we'll use a canvas-based fallback approach
-</script>
-<style>
-:root {
-  --Y:#F5C800; --YD:#C9A200; --GD:#1B4332; --GM:#2D6A4F;
-  --NV:#1A237E; --NVL:#283593; --CR:#FFFDE7; --CR2:#FFF8DC;
-  --RD:#C62828; --TX:#111; --SH:0 4px 20px rgba(0,0,0,0.15);
-  --BOR:3px solid #1B4332;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#EDD900;background-image:radial-gradient(circle at 10% 10%,rgba(27,67,50,.07),transparent 50%),radial-gradient(circle at 90% 90%,rgba(27,67,50,.07),transparent 50%);min-height:100vh;font-family:'Nunito',sans-serif;color:var(--TX)}
-
-/* HEADER */
-header{background:var(--Y);border-bottom:6px solid var(--GD);box-shadow:var(--SH);position:sticky;top:0;z-index:200}
-.hdr{max-width:1400px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
-.brand{display:flex;align-items:center;gap:12px;min-width:0;flex-shrink:1}
-.bicon{width:54px;height:54px;border-radius:50%;background:var(--GD);border:3px solid var(--YD);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 3px 10px rgba(0,0,0,.3);flex-shrink:0}
-.brand h1{font-family:'Teko',sans-serif;font-size:40px;font-weight:700;color:var(--GD);line-height:1;letter-spacing:3px;white-space:nowrap}
-.brand p{font-size:11px;color:var(--GM);font-weight:800;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
-.hpills{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.pill{background:var(--GD);color:var(--Y);padding:6px 14px;border-radius:30px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;white-space:nowrap}
-
-main{max-width:1400px;margin:0 auto;padding:24px 28px}
-
-/* TABS */
-.tabs{display:flex;gap:0;margin-bottom:0;border-bottom:4px solid var(--GD);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
-.tabs::-webkit-scrollbar{height:4px}
-.tabs::-webkit-scrollbar-thumb{background:var(--GD);border-radius:4px}
-.tab{background:#C9A200;color:var(--GD);border:none;padding:11px 24px;font-family:'Teko',sans-serif;font-size:19px;letter-spacing:1px;cursor:pointer;border-radius:8px 8px 0 0;margin-right:4px;transition:all .2s;font-weight:700;white-space:nowrap;flex-shrink:0}
-.tab.active{background:var(--GD);color:var(--Y)}
-.tab:hover:not(.active){background:var(--YD)}
-.tab-panel{display:none;background:var(--CR);border:var(--BOR);border-top:none;border-radius:0 0 12px 12px;box-shadow:var(--SH);padding:24px;margin-bottom:24px}
-.tab-panel.active{display:block}
-
-/* CONFIG */
-.cfg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:20px}
-.cfg-grp{display:flex;flex-direction:column;gap:5px}
-.cfg-lbl{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--GD)}
-.cfg-inp{background:#fff;border:2px solid var(--GD);border-radius:7px;padding:9px 12px;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;color:var(--TX);outline:none;width:100%;transition:border-color .2s}
-.cfg-inp:focus{border-color:var(--NV)}
-.cfg-sel{background:#fff;border:2px solid var(--GD);border-radius:7px;padding:9px 12px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:var(--TX);cursor:pointer;outline:none;width:100%}
-
-/* BUTTONS */
-.btn{border:none;border-radius:8px;cursor:pointer;font-family:'Teko',sans-serif;font-size:19px;letter-spacing:1px;padding:10px 22px;transition:all .2s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
-.btn-green{background:var(--GD);color:var(--Y)}
-.btn-green:hover{background:var(--GM);transform:translateY(-2px)}
-.btn-yellow{background:var(--Y);color:var(--GD);border:2px solid var(--GD)}
-.btn-yellow:hover{background:#fff}
-.btn-navy{background:var(--NV);color:#fff}
-.btn-navy:hover{background:var(--NVL)}
-.btn-red{background:var(--RD);color:#fff}
-.btn-red:hover{opacity:.9}
-.btn-sm{font-size:14px;padding:6px 14px}
-
-/* SECTION HEADER */
-.shdr{background:var(--GD);color:var(--Y);font-family:'Teko',sans-serif;font-size:22px;letter-spacing:1.5px;padding:9px 20px;border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.scard{background:var(--CR);border:var(--BOR);border-top:none;border-radius:0 0 10px 10px;margin-bottom:22px;overflow:hidden}
-.spad{padding:20px}
-
-/* FORMULA BAR */
-.fbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;background:var(--NV);border-radius:12px;padding:18px 22px;margin-bottom:20px}
-.fi{text-align:center}
-.fi-l{font-size:10px;color:rgba(245,200,0,.65);text-transform:uppercase;letter-spacing:1px;font-weight:800;margin-bottom:4px}
-.fi-v{font-family:'Teko',sans-serif;font-size:28px;color:var(--Y);line-height:1}
-.fi-s{font-size:10px;color:rgba(255,255,255,.5);margin-top:2px}
-
-/* PROFIT BANNER */
-.pbanner{background:var(--GD);border:4px solid var(--Y);border-radius:14px;padding:20px 26px;margin-bottom:22px;display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr 1px 1fr;gap:16px;align-items:center}
-.pi{text-align:center}
-.pi-l{font-size:10px;color:rgba(245,200,0,.65);text-transform:uppercase;letter-spacing:1px;font-weight:800;margin-bottom:5px}
-.pi-v{font-family:'Teko',sans-serif;font-size:34px;color:var(--Y);line-height:1}
-.pi-s{font-size:10px;color:rgba(255,255,255,.5);margin-top:2px}
-.psep{background:rgba(245,200,0,.25);height:50px;width:1px;margin:auto}
-
-/* TABLES */
-.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table{width:100%;border-collapse:collapse;font-size:12px}
-th{padding:9px 12px;text-align:center;font-family:'Teko',sans-serif;font-size:14px;letter-spacing:.6px;border:1px solid rgba(0,0,0,.15)}
-td{padding:8px 12px;text-align:center;border:1px solid rgba(0,0,0,.1);vertical-align:middle}
-.th-gd{background:var(--GD);color:var(--Y)}
-.th-nv{background:var(--NV);color:#fff}
-.th-yw{background:var(--YD);color:var(--TX)}
-tr.ev td{background:#fff}
-tr.od td{background:var(--CR)}
-tr.org-r td{background:var(--Y)!important;font-weight:800}
-tr.tot-r td{background:var(--GD)!important;color:var(--Y);font-weight:700;font-family:'JetBrains Mono',monospace;font-size:11px}
-.mnum{font-family:'Teko',sans-serif;font-size:18px;color:var(--RD);font-weight:700}
-.mono{font-family:'JetBrains Mono',monospace;font-size:11px}
-.cg{color:#155724;font-weight:700}
-.cr{color:var(--RD);font-weight:700}
-.cn{color:var(--NV);font-weight:700}
-.co{color:#7B5800;font-weight:700}
-.lift-c{background:rgba(27,67,50,.12)!important}
-.chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
-.chip-g{background:var(--GD);color:var(--Y)}
-.chip-n{background:var(--NV);color:#fff}
-.chip-r{background:var(--RD);color:#fff}
-
-/* MEMBER TABLE */
-.mem-tbl input[type=text],.mem-tbl select{width:100%;background:#fff;border:1.5px solid var(--GD);border-radius:5px;padding:5px 8px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;color:var(--TX);outline:none}
-.mem-tbl input[type=text]:focus,.mem-tbl select:focus{border-color:var(--NV)}
-
-/* MANUAL ADJ TABLE */
-.adj-inp{width:90px;background:#fff;border:1.5px solid var(--NV);border-radius:5px;padding:4px 6px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--TX);text-align:center;outline:none}
-.adj-inp:focus{border-color:var(--RD)}
-.adj-inp.manual{border-color:var(--RD);background:#FFF0F0}
-.adj-inp.auto{border-color:var(--GD);background:#F0FFF4}
-
-/* NOTE */
-.note{background:rgba(245,200,0,.25);border:2px solid var(--YD);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;line-height:1.6;color:var(--GD);font-weight:600}
-.info{background:#E3F2FD;border:2px solid #1565C0;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#0D47A1;font-weight:600}
-
-.flex-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
-
-/* DOWNLOAD BAR */
-.dl-bar{background:var(--NV);border-radius:10px;padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
-.dl-lbl{color:rgba(255,255,255,.7);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px}
-
-/* ========== CHIT BUILDER STYLES ========== */
-.cb-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
-.cb-controls .btn{font-size:15px;padding:8px 16px}
-.cb-table-wrap{background:#fff;border:3px solid var(--GD);border-radius:10px;overflow:hidden;margin-bottom:20px}
-.cb-table{width:100%;border-collapse:collapse;font-size:13px}
-.cb-table th{padding:10px 14px;text-align:center;font-family:'Teko',sans-serif;font-size:15px;letter-spacing:.8px;border:1px solid rgba(0,0,0,.15);position:relative}
-.cb-table td{padding:6px 8px;text-align:center;border:1px solid rgba(0,0,0,.1);vertical-align:middle}
-.cb-table .cb-input{width:100%;min-width:70px;background:transparent;border:1.5px solid transparent;border-radius:4px;padding:6px 8px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--TX);text-align:center;outline:none;transition:border-color .2s}
-.cb-table .cb-input:focus{border-color:var(--NV);background:#F0F4FF}
-.cb-table .cb-input:hover{border-color:var(--YD)}
-.cb-sub-header th{font-size:11px;padding:6px 10px;background:var(--YD);color:var(--TX);font-weight:700}
-.cb-col-remove{position:absolute;top:2px;right:4px;background:var(--RD);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
-.cb-table th:hover .cb-col-remove{opacity:1}
-.cb-row-remove{background:var(--RD);color:#fff;border:none;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;font-weight:700}
-.cb-row-remove:hover{opacity:.8}
-.cb-header-input{background:transparent;border:none;border-bottom:2px dashed rgba(245,200,0,.5);color:inherit;font-family:'Teko',sans-serif;font-size:14px;letter-spacing:.6px;text-align:center;outline:none;width:100%;padding:2px 4px}
-.cb-header-input:focus{border-bottom-color:var(--Y)}
-.cb-header-input::placeholder{color:rgba(245,200,0,.4)}
-
-/* Image preview modal */
-.cb-preview-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:999;justify-content:center;align-items:center;padding:20px}
-.cb-preview-overlay.show{display:flex}
-.cb-preview-box{background:#fff;border-radius:12px;padding:20px;max-width:95vw;max-height:95vh;overflow:auto;box-shadow:0 10px 40px rgba(0,0,0,.4)}
-.cb-preview-box img{max-width:100%;border-radius:8px}
-.cb-preview-actions{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
-
-/* ========== MOBILE RESPONSIVE ========== */
-@media(max-width:900px){
-  main{padding:16px}
-  .hdr{padding:12px 16px;flex-direction:column;align-items:stretch;gap:10px}
-  .brand{justify-content:center}
-  .hpills{justify-content:center}
-  .pbanner{grid-template-columns:1fr 1fr;gap:12px}
-  .psep{display:none}
-  .fbar{grid-template-columns:1fr 1fr;gap:10px}
-  .cfg-grid{grid-template-columns:1fr 1fr}
-  .tab{padding:9px 16px;font-size:16px}
-  .shdr{font-size:18px;padding:8px 14px}
-}
-
-@media(max-width:600px){
-  main{padding:10px}
-  .hdr{padding:10px 12px;gap:8px}
-  .brand h1{font-size:28px;letter-spacing:2px}
-  .brand p{font-size:9px;letter-spacing:.5px}
-  .bicon{width:42px;height:42px;font-size:18px}
-  .hpills{gap:5px}
-  .pill{padding:4px 10px;font-size:9px}
-  .tab{padding:7px 12px;font-size:14px;margin-right:2px}
-  .tab-panel{padding:14px;margin-bottom:16px}
-  .cfg-grid{grid-template-columns:1fr}
-  .cfg-inp,.cfg-sel{font-size:13px;padding:8px 10px}
-  .pbanner{grid-template-columns:1fr;gap:10px;padding:14px 16px}
-  .pi-v{font-size:26px}
-  .pi-l{font-size:9px}
-  .fbar{grid-template-columns:1fr;padding:14px 16px}
-  .fi-v{font-size:22px}
-  .btn{font-size:15px;padding:8px 16px}
-  .btn-sm{font-size:12px;padding:5px 10px}
-  .dl-bar{padding:10px 14px;gap:8px;flex-direction:column;align-items:flex-start}
-  .shdr{font-size:16px;padding:8px 12px;flex-direction:column;gap:4px}
-  .spad{padding:12px}
-  .note,.info{font-size:11px;padding:8px 10px}
-  .flex-row{gap:6px}
-  .cb-controls{flex-direction:column;align-items:stretch}
-  .cb-controls .btn{justify-content:center}
-}
-
-@media(max-width:400px){
-  .brand h1{font-size:24px;letter-spacing:1px}
-  .brand p{font-size:8px}
-  .bicon{width:36px;height:36px;font-size:16px}
-  .pill{padding:3px 8px;font-size:8px}
-  .tab{padding:6px 8px;font-size:12px;letter-spacing:.5px}
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kumar Chits – Organizer Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'inter': ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50:'#ecfdf5',100:'#d1fae5',200:'#a7f3d0',300:'#6ee7b7',400:'#34d399',500:'#10b981',600:'#059669',700:'#047857',800:'#065f46',900:'#064e3b' },
+                        sidebar: { DEFAULT:'#0f172a', light:'#1e293b' },
+                        gold: { 400:'#facc15', 500:'#eab308', 600:'#ca8a04' }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
+<body class="font-inter bg-gray-50 text-gray-800 min-h-screen flex">
 
-<header>
-  <div class="hdr">
-    <div class="brand">
-      <div class="bicon">🪙</div>
-      <div>
-        <h1>KUMAR CHITS</h1>
-        <p>Organiser Dashboard · Your Trust, Our Commitment</p>
-      </div>
-    </div>
-    <div class="hpills" id="hpills">
-      <div class="pill">ORGANISER MODE</div>
-      <div class="pill" id="pillChit">₹10,000 CHIT</div>
-      <div class="pill" id="pillMem">10 MEMBERS</div>
-      <div class="pill" id="pillMon">10 MONTHS</div>
-    </div>
-  </div>
-</header>
+    <!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden" onclick="toggleSidebar()"></div>
 
-<main>
-
-<!-- TABS -->
-<div class="tabs">
-  <button class="tab active" data-tab="setup" onclick="showTab('setup',this)">⚙️ SETUP</button>
-  <button class="tab" data-tab="contrib" onclick="showTab('contrib',this)">📊 CONTRIBUTIONS</button>
-  <button class="tab" data-tab="schedule" onclick="showTab('schedule',this)">📅 SCHEDULE</button>
-  <button class="tab" data-tab="members" onclick="showTab('members',this)">👥 MEMBERS</button>
-  <button class="tab" data-tab="summary" onclick="showTab('summary',this)">📋 SUMMARY</button>
-  <button class="tab" data-tab="builder" onclick="showTab('builder',this)">🏗️ CHIT BUILDER</button>
-</div>
-
-<!-- TAB: SETUP -->
-<div id="tab-setup" class="tab-panel active">
-
-  <div class="note">
-    ⚠️ <strong>Organiser Model:</strong> You are the organiser and do <strong>NOT</strong> participate as a member. Members who haven't lifted yet pay a decreasing monthly amount. Once a member lifts, they pay a fixed amount (equal to Month 1 rate) for all remaining months. Profit = Pool Collected − Chit Value each month.
-  </div>
-
-  <div class="shdr">⚙️ CHIT CONFIGURATION</div>
-  <div class="scard"><div class="spad">
-    <div class="cfg-grid">
-      <div class="cfg-grp">
-        <div class="cfg-lbl">Chit Value (₹)</div>
-        <input class="cfg-inp" id="cfgVal" type="number" value="10000" min="1000" step="1000" oninput="onCfgChange()">
-      </div>
-      <div class="cfg-grp">
-        <div class="cfg-lbl">No. of Members</div>
-        <input class="cfg-inp" id="cfgMem" type="number" value="10" min="2" max="50" oninput="onCfgChange()">
-      </div>
-      <div class="cfg-grp">
-        <div class="cfg-lbl">Duration (Months)</div>
-        <input class="cfg-inp" id="cfgMon" type="number" value="10" min="2" max="50" oninput="onCfgChange()">
-      </div>
-      <div class="cfg-grp">
-        <div class="cfg-lbl">Chit Name / Group</div>
-        <input class="cfg-inp" id="cfgName" type="text" value="Chit Group A" placeholder="e.g. Family Chit">
-      </div>
-      <div class="cfg-grp">
-        <div class="cfg-lbl">Start Month</div>
-        <select class="cfg-sel" id="cfgStartMonth">
-          <option>January 2025</option><option>February 2025</option><option>March 2025</option>
-          <option>April 2025</option><option>May 2025</option><option selected>June 2025</option>
-          <option>July 2025</option><option>August 2025</option><option>September 2025</option>
-          <option>October 2025</option><option>November 2025</option><option>December 2025</option>
-          <option>January 2026</option><option>February 2026</option><option>March 2026</option>
-          <option>April 2026</option><option>May 2026</option><option>June 2026</option>
-        </select>
-      </div>
-    </div>
-    <button class="btn btn-green" onclick="build()">⚡ GENERATE CHIT PLAN</button>
-  </div></div>
-
-  <!-- Formula Values -->
-  <div class="fbar" id="fbar"></div>
-
-  <!-- Profit Banner -->
-  <div class="pbanner">
-    <div class="pi"><div class="pi-l">Total Contributions</div><div class="pi-v" id="pbCollected">—</div><div class="pi-s">Collected from all members</div></div>
-    <div class="psep"></div>
-    <div class="pi"><div class="pi-l">Total Payouts</div><div class="pi-v" id="pbPaid">—</div><div class="pi-s">Paid to lifters</div></div>
-    <div class="psep"></div>
-    <div class="pi"><div class="pi-l">🏆 Organiser Profit</div><div class="pi-v" id="pbProfit">—</div><div class="pi-s" id="pbProfitSub">Collected − Paid</div></div>
-    <div class="psep"></div>
-    <div class="pi"><div class="pi-l">Profit per Month (avg)</div><div class="pi-v" id="pbPPM">—</div><div class="pi-s">Average monthly earnings</div></div>
-  </div>
-
-</div>
-
-<!-- TAB: CONTRIBUTIONS -->
-<div id="tab-contrib" class="tab-panel">
-
-  <div class="dl-bar">
-    <span class="dl-lbl">📥 Download:</span>
-    <button class="btn btn-yellow btn-sm" onclick="downloadCSV('contrib')">⬇ Contribution Table (CSV)</button>
-  </div>
-
-  <div class="info">
-    🔵 <strong>Blue border</strong> = Auto-calculated. <strong>Red border / red background</strong> = Manually overridden. You can freely edit any value — the pool total updates automatically.<br>
-    📌 <strong>New Logic:</strong> Members who already lifted pay the <strong>fixed rate</strong> (Month 1 amount). Members who haven't lifted yet (including the current lifter) pay the <strong>decreasing rate</strong>.
-  </div>
-
-  <div class="flex-row">
-    <button class="btn btn-green btn-sm" onclick="resetAllManual()">↺ Reset All to Auto</button>
-    <button class="btn btn-navy btn-sm" onclick="build()">🔄 Recalculate</button>
-  </div>
-
-  <div class="shdr" style="border-radius:8px 8px 0 0">
-    📊 CONTRIBUTION TABLE
-    <span style="font-size:13px;color:rgba(245,200,0,.7)">Edit any cell to override</span>
-  </div>
-  <div class="scard">
-    <div class="tscroll">
-      <table>
-        <thead>
-          <tr>
-            <th class="th-gd">S.No.</th>
-            <th class="th-yw">NOT YET LIFTED (₹)<br><small style="font-size:10px">Decreasing rate for unlift members</small></th>
-            <th class="th-gd">ALREADY LIFTED (₹)<br><small style="font-size:10px">Fixed rate for lifted members</small></th>
-            <th class="th-nv">POOL COLLECTED (₹)<br><small style="font-size:10px">(unlift × rate) + (lifted × fixed)</small></th>
-            <th class="th-yw">PAYMENT TO LIFTER (₹)</th>
-            <th class="th-gd">ORGANISER GAIN (₹)</th>
-          </tr>
-        </thead>
-        <tbody id="contribBody"></tbody>
-        <tfoot id="contribFoot"></tfoot>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- TAB: SCHEDULE -->
-<div id="tab-schedule" class="tab-panel">
-
-  <div class="dl-bar">
-    <span class="dl-lbl">📥 Download:</span>
-    <button class="btn btn-yellow btn-sm" onclick="downloadCSV('schedule')">⬇ Full Schedule (CSV)</button>
-  </div>
-
-  <div class="note">Assign each member to the month they want to lift. Month with no assignment will show as unassigned.</div>
-
-  <div class="shdr">📅 MONTHLY CHIT SCHEDULE</div>
-  <div class="scard">
-    <div class="tscroll">
-      <table>
-        <thead>
-          <tr>
-            <th class="th-gd">Month</th>
-            <th class="th-gd">Calendar</th>
-            <th class="th-gd">Member Lifting</th>
-            <th class="th-yw">Pool Collected (₹)</th>
-            <th class="th-gd">Paid to Lifter (₹)</th>
-            <th class="th-yw">Organiser Gain (₹)</th>
-            <th class="th-nv">Cumulative Profit (₹)</th>
-          </tr>
-        </thead>
-        <tbody id="schedBody"></tbody>
-        <tfoot id="schedFoot"></tfoot>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- TAB: MEMBERS -->
-<div id="tab-members" class="tab-panel">
-
-  <div class="dl-bar">
-    <span class="dl-lbl">📥 Download:</span>
-    <button class="btn btn-yellow btn-sm" onclick="downloadCSV('members')">⬇ Member Details (CSV)</button>
-    <button class="btn btn-yellow btn-sm" onclick="downloadCSV('all')">⬇ Complete Report (CSV)</button>
-  </div>
-
-  <div class="flex-row">
-    <button class="btn btn-green btn-sm" onclick="build()">🔄 Refresh</button>
-  </div>
-
-  <div class="shdr">👥 MEMBER DETAILS & ASSIGNMENT</div>
-  <div class="scard">
-    <div class="tscroll">
-      <table class="mem-tbl">
-        <thead>
-          <tr>
-            <th class="th-gd">#</th>
-            <th class="th-gd">Member Name</th>
-            <th class="th-gd">Phone</th>
-            <th class="th-yw">Lifts in Month</th>
-            <th class="th-nv">Total Contribution (₹)</th>
-            <th class="th-gd">Received (₹)</th>
-            <th class="th-yw">Net (₹)</th>
-          </tr>
-        </thead>
-        <tbody id="memBody"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- TAB: SUMMARY -->
-<div id="tab-summary" class="tab-panel">
-
-  <div class="dl-bar">
-    <span class="dl-lbl">📥 Download:</span>
-    <button class="btn btn-yellow btn-sm" onclick="downloadCSV('summary')">⬇ Summary (CSV)</button>
-    <button class="btn btn-yellow btn-sm" onclick="downloadCSV('all')">⬇ Full Report (CSV)</button>
-  </div>
-
-  <div class="pbanner" style="margin-bottom:20px">
-    <div class="pi"><div class="pi-l">Chit Value</div><div class="pi-v" id="sumCV">—</div><div class="pi-s">Per lifter payout</div></div>
-    <div class="psep"></div>
-    <div class="pi"><div class="pi-l">Members</div><div class="pi-v" id="sumMem">—</div><div class="pi-s">Excluding organiser</div></div>
-    <div class="psep"></div>
-    <div class="pi"><div class="pi-l">Total Collected</div><div class="pi-v" id="sumCol">—</div><div class="pi-s">Over all months</div></div>
-    <div class="psep"></div>
-    <div class="pi"><div class="pi-l">🏆 Your Profit</div><div class="pi-v" id="sumProfit">—</div><div class="pi-s">Net organiser earnings</div></div>
-  </div>
-
-  <div class="shdr">📋 MEMBER-WISE SUMMARY</div>
-  <div class="scard">
-    <div class="tscroll">
-      <table>
-        <thead>
-          <tr>
-            <th class="th-gd">#</th>
-            <th class="th-gd">Member</th>
-            <th class="th-gd">Lifts Month</th>
-            <th class="th-yw">Total Paid (₹)</th>
-            <th class="th-gd">Received (₹)</th>
-            <th class="th-yw">Net Gain/Loss (₹)</th>
-            <th class="th-nv">Effective Cost (₹)</th>
-            <th class="th-gd">Savings vs M1 (₹)</th>
-          </tr>
-        </thead>
-        <tbody id="sumBody"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- TAB: CHIT BUILDER -->
-<div id="tab-builder" class="tab-panel">
-
-  <div class="note">
-    🏗️ <strong>Chit Builder:</strong> Create a custom chit table. Add rows, add/remove columns, and fill in your own values. When done, download the table as a high-resolution JPEG image.
-  </div>
-
-  <div class="dl-bar">
-    <span class="dl-lbl">📥 Export:</span>
-    <button class="btn btn-yellow btn-sm" onclick="downloadBuilderImage()">📸 Download as JPEG (High Res)</button>
-  </div>
-
-  <div class="cb-controls">
-    <button class="btn btn-green btn-sm" onclick="cbAddRow()">➕ Add Row</button>
-    <button class="btn btn-red btn-sm" onclick="cbRemoveRow()">➖ Remove Last Row</button>
-    <button class="btn btn-navy btn-sm" onclick="cbAddColumn()">➕ Add Column</button>
-    <button class="btn btn-yellow btn-sm" onclick="cbRemoveColumn()">➖ Remove Column</button>
-    <button class="btn btn-green btn-sm" onclick="cbSetRows()">📏 Set Number of Rows</button>
-    <button class="btn btn-red btn-sm" onclick="cbClearAll()">🗑️ Clear All Data</button>
-  </div>
-
-  <div id="cbTableContainer">
-    <div class="shdr" id="cbTableHeader">
-      🏗️ CHIT BUILDER TABLE
-      <span style="font-size:13px;color:rgba(245,200,0,.7)">Click any cell to edit</span>
-    </div>
-    <div class="scard">
-      <div class="tscroll">
-        <div id="cbTableWrap" class="cb-table-wrap">
-          <table class="cb-table" id="cbTable">
-            <thead id="cbThead"></thead>
-            <tbody id="cbTbody"></tbody>
-          </table>
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar fixed lg:sticky top-0 left-0 h-screen w-72 z-50 flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
+        <!-- Logo -->
+        <div class="px-6 py-6 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center shadow-lg">
+                    <i class="fas fa-coins text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-white font-bold text-xl tracking-tight">Kumar Chits</h1>
+                    <p class="text-brand-300 text-xs font-medium">Organizer Dashboard</p>
+                </div>
+            </div>
         </div>
-      </div>
+        <!-- Nav -->
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+            <a href="#" onclick="navigateTo('dashboard')" data-section="dashboard" class="nav-link active">
+                <i class="fas fa-chart-pie w-5 text-center"></i><span>Dashboard</span>
+            </a>
+            <a href="#" onclick="navigateTo('chits')" data-section="chits" class="nav-link">
+                <i class="fas fa-layer-group w-5 text-center"></i><span>Chits</span>
+            </a>
+            <a href="#" onclick="navigateTo('members')" data-section="members" class="nav-link">
+                <i class="fas fa-users w-5 text-center"></i><span>Members</span>
+            </a>
+            <a href="#" onclick="navigateTo('downloads')" data-section="downloads" class="nav-link">
+                <i class="fas fa-download w-5 text-center"></i><span>Downloads</span>
+            </a>
+            <a href="#" onclick="navigateTo('settings')" data-section="settings" class="nav-link">
+                <i class="fas fa-cog w-5 text-center"></i><span>Settings</span>
+            </a>
+        </nav>
+        <!-- Footer -->
+        <div class="px-6 py-4 border-t border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-brand-600 flex items-center justify-center text-white font-bold text-sm">KA</div>
+                <div>
+                    <p class="text-white text-sm font-semibold">Kumar Admin</p>
+                    <p class="text-gray-400 text-xs">Organizer</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-h-screen min-w-0">
+        <!-- Top Navbar -->
+        <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-lg border-b border-gray-200/80 px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition">
+                        <i class="fas fa-bars text-gray-600 text-lg"></i>
+                    </button>
+                    <div>
+                        <h2 id="pageTitle" class="text-lg sm:text-xl font-bold text-gray-900">Dashboard</h2>
+                        <p id="pageSubtitle" class="text-xs text-gray-500 hidden sm:block">Overview of your chit fund operations</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="hidden sm:block relative">
+                        <input type="text" id="globalSearch" placeholder="Search..." oninput="handleGlobalSearch(this.value)" class="pl-9 pr-4 py-2 text-sm bg-gray-100 border-0 rounded-xl w-56 focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    </div>
+                    <button onclick="location.reload()" class="p-2 rounded-xl hover:bg-gray-100 transition text-gray-500" title="Refresh">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold text-sm shadow-md">K</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 px-4 sm:px-6 lg:px-8 py-6">
+
+            <!-- DASHBOARD SECTION -->
+            <section id="section-dashboard" class="section-content">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+                    <div class="stat-card group">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Total Chits</p>
+                                <p id="statTotalChits" class="text-3xl font-bold text-gray-900 mt-1">0</p>
+                                <p class="text-xs text-brand-600 font-medium mt-1"><i class="fas fa-circle text-[6px] mr-1"></i>Active Schemes</p>
+                            </div>
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                <i class="fas fa-layer-group text-white text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card group">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Total Members</p>
+                                <p id="statTotalMembers" class="text-3xl font-bold text-gray-900 mt-1">0</p>
+                                <p class="text-xs text-blue-600 font-medium mt-1"><i class="fas fa-arrow-up text-[10px] mr-1"></i>Enrolled</p>
+                            </div>
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                <i class="fas fa-users text-white text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card group">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Total Collection</p>
+                                <p id="statTotalCollection" class="text-3xl font-bold text-gray-900 mt-1">₹0</p>
+                                <p class="text-xs text-purple-600 font-medium mt-1"><i class="fas fa-chart-line text-[10px] mr-1"></i>All Schemes</p>
+                            </div>
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                <i class="fas fa-indian-rupee-sign text-white text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card group">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Estimated Profit</p>
+                                <p id="statEstimatedProfit" class="text-3xl font-bold text-gray-900 mt-1">₹0</p>
+                                <p class="text-xs text-amber-600 font-medium mt-1"><i class="fas fa-star text-[10px] mr-1"></i>Organizer</p>
+                            </div>
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                <i class="fas fa-trophy text-white text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Recent Chits -->
+                    <div class="card">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-gray-900 text-lg">Recent Chits</h3>
+                            <a href="#" onclick="navigateTo('chits')" class="text-sm text-brand-600 hover:text-brand-700 font-medium">View All →</a>
+                        </div>
+                        <div id="recentChitsList" class="space-y-3"></div>
+                    </div>
+                    <!-- Recent Members -->
+                    <div class="card">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-gray-900 text-lg">Recent Members</h3>
+                            <a href="#" onclick="navigateTo('members')" class="text-sm text-brand-600 hover:text-brand-700 font-medium">View All →</a>
+                        </div>
+                        <div id="recentMembersList" class="space-y-3"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CHITS SECTION -->
+            <section id="section-chits" class="section-content hidden">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                    <div class="relative w-full sm:w-72">
+                        <input type="text" id="searchChits" placeholder="Search chits..." oninput="renderChits()" class="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-sm">
+                        <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    </div>
+                    <button onclick="openChitModal()" class="btn-primary whitespace-nowrap">
+                        <i class="fas fa-plus mr-2"></i>Create Chit
+                    </button>
+                </div>
+                <div id="chitsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+                <div id="noChits" class="hidden text-center py-16">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                        <i class="fas fa-layer-group text-3xl text-gray-300"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-600">No Chits Found</h3>
+                    <p class="text-gray-400 text-sm mt-1">Create your first chit scheme to get started.</p>
+                </div>
+            </section>
+
+            <!-- MEMBERS SECTION -->
+            <section id="section-members" class="section-content hidden">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                    <div class="relative w-full sm:w-72">
+                        <input type="text" id="searchMembers" placeholder="Search members..." oninput="renderMembers()" class="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-sm">
+                        <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="exportCSV()" class="btn-secondary whitespace-nowrap">
+                            <i class="fas fa-file-csv mr-2"></i>Export CSV
+                        </button>
+                        <button onclick="openMemberModal()" class="btn-primary whitespace-nowrap">
+                            <i class="fas fa-user-plus mr-2"></i>Add Member
+                        </button>
+                    </div>
+                </div>
+                <!-- Members Table -->
+                <div class="card overflow-hidden !p-0">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-50/80 border-b border-gray-200">
+                                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">#</th>
+                                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Member</th>
+                                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Phone</th>
+                                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Chit</th>
+                                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Amount</th>
+                                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Lift Month</th>
+                                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="text-right px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="membersTableBody" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="noMembers" class="hidden text-center py-16">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                        <i class="fas fa-users text-3xl text-gray-300"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-600">No Members Found</h3>
+                    <p class="text-gray-400 text-sm mt-1">Add your first member to get started.</p>
+                </div>
+            </section>
+
+            <!-- DOWNLOADS SECTION -->
+            <section id="section-downloads" class="section-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- Member Cards -->
+                    <div class="card text-center hover:shadow-xl transition-shadow">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-id-card text-white text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Member Cards</h3>
+                        <p class="text-gray-500 text-sm mb-5">Download premium member identity cards as PNG images.</p>
+                        <select id="downloadMemberSelect" class="w-full mb-4 px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500">
+                            <option value="">Select a member...</option>
+                        </select>
+                        <button onclick="downloadSelectedMemberCard()" class="btn-primary w-full"><i class="fas fa-download mr-2"></i>Download Card</button>
+                    </div>
+                    <!-- Chit Posters -->
+                    <div class="card text-center hover:shadow-xl transition-shadow">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-image text-white text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Chit Posters</h3>
+                        <p class="text-gray-500 text-sm mb-5">Generate traditional chit fund poster images for schemes.</p>
+                        <select id="downloadPosterSelect" class="w-full mb-4 px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500">
+                            <option value="">Select a chit...</option>
+                        </select>
+                        <button onclick="downloadSelectedPoster()" class="btn-primary w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"><i class="fas fa-download mr-2"></i>Download Poster</button>
+                    </div>
+                    <!-- CSV Export -->
+                    <div class="card text-center hover:shadow-xl transition-shadow">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-file-csv text-white text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">Export Data</h3>
+                        <p class="text-gray-500 text-sm mb-5">Export all member details to CSV spreadsheet format.</p>
+                        <div class="mb-4 px-4 py-3 bg-gray-50 rounded-xl">
+                            <p class="text-sm text-gray-600"><span id="csvMemberCount" class="font-bold text-brand-600">0</span> members ready to export</p>
+                        </div>
+                        <button onclick="exportCSV()" class="btn-primary w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"><i class="fas fa-file-export mr-2"></i>Export CSV</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SETTINGS SECTION -->
+            <section id="section-settings" class="section-content hidden">
+                <div class="max-w-2xl">
+                    <div class="card mb-6">
+                        <h3 class="font-bold text-gray-900 text-lg mb-4"><i class="fas fa-building mr-2 text-brand-600"></i>Organization Details</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Organization Name</label>
+                                <input type="text" id="settingsOrgName" value="Kumar Chits" class="form-input">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Organizer Name</label>
+                                <input type="text" id="settingsOrganizerName" value="Kumar" class="form-input">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
+                                <input type="text" id="settingsContact" value="+91 98765 43210" class="form-input">
+                            </div>
+                            <button onclick="saveSettings()" class="btn-primary"><i class="fas fa-save mr-2"></i>Save Settings</button>
+                        </div>
+                    </div>
+                    <div class="card mb-6">
+                        <h3 class="font-bold text-gray-900 text-lg mb-4"><i class="fas fa-database mr-2 text-purple-600"></i>Data Management</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <button onclick="resetToDemo()" class="btn-secondary text-amber-700 border-amber-200 hover:bg-amber-50"><i class="fas fa-redo mr-2"></i>Reset to Demo Data</button>
+                            <button onclick="clearAllData()" class="btn-secondary text-red-700 border-red-200 hover:bg-red-50"><i class="fas fa-trash mr-2"></i>Clear All Data</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2"><i class="fas fa-info-circle mr-2 text-blue-600"></i>About</h3>
+                        <p class="text-gray-500 text-sm">Kumar Chits Organizer Dashboard v1.0</p>
+                        <p class="text-gray-400 text-xs mt-1">Built with ❤️ for chit fund organizers.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
     </div>
-  </div>
 
-</div>
-
-<!-- Image Preview Modal -->
-<div class="cb-preview-overlay" id="cbPreviewOverlay" onclick="closePreview(event)">
-  <div class="cb-preview-box" onclick="event.stopPropagation()">
-    <h3 style="text-align:center;font-family:'Teko',sans-serif;font-size:24px;color:var(--GD);margin-bottom:10px">📸 Image Preview</h3>
-    <img id="cbPreviewImg" src="" alt="Preview">
-    <div class="cb-preview-actions">
-      <button class="btn btn-green" onclick="saveBuilderImage()">⬇ Download JPEG</button>
-      <button class="btn btn-red" onclick="closePreview()">✖ Close</button>
+    <!-- MODAL: Create/Edit Chit -->
+    <div id="chitModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-lg">
+            <div class="flex items-center justify-between mb-6">
+                <h3 id="chitModalTitle" class="text-xl font-bold text-gray-900">Create New Chit</h3>
+                <button onclick="closeChitModal()" class="p-2 rounded-lg hover:bg-gray-100 transition"><i class="fas fa-times text-gray-400"></i></button>
+            </div>
+            <form id="chitForm" onsubmit="handleChitSubmit(event)" class="space-y-4">
+                <input type="hidden" id="chitEditId">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Chit Name <span class="text-red-400">*</span></label>
+                    <input type="text" id="chitName" required placeholder="e.g., 10K Monthly Chit" class="form-input">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Chit Value (₹) <span class="text-red-400">*</span></label>
+                        <input type="number" id="chitValue" required placeholder="10000" class="form-input">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Monthly Amount (₹) <span class="text-red-400">*</span></label>
+                        <input type="number" id="chitMonthly" required placeholder="1200" class="form-input">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">No. of Members <span class="text-red-400">*</span></label>
+                        <input type="number" id="chitMembers" required placeholder="10" class="form-input">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">No. of Months <span class="text-red-400">*</span></label>
+                        <input type="number" id="chitMonths" required placeholder="10" class="form-input">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Starting Not Lift Amt</label>
+                        <input type="number" id="chitStartNotLift" placeholder="1000" class="form-input">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Monthly Decrease</label>
+                        <input type="number" id="chitMonthlyDecrease" placeholder="100" class="form-input">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Lift Amount (₹)</label>
+                    <input type="number" id="chitLiftAmount" placeholder="9000" class="form-input">
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="submit" class="btn-primary flex-1"><i class="fas fa-save mr-2"></i><span id="chitSubmitText">Create Chit</span></button>
+                    <button type="button" onclick="closeChitModal()" class="btn-secondary flex-1">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
-</div>
 
-</main>
-
-<script>
-// ═══════════════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════════════
-let S = {
-  chitVal:10000, nMem:10, nMon:10,
-  fixedRate:0, startAmt:0, step:0,
-  members:[], // {name, phone, liftMonth}
-  manualNotLift:[], // per month override or null (decreasing rate)
-  manualFixed:[],   // per month override or null (fixed rate for lifted members)
-  calMonths:[]
-};
-
-const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const BASE_NAMES = [
-  'Ramesh Kumar','Priya Sharma','Suresh Muthu','Kavitha Raj','Vijay Nair',
-  'Meena Lakshmi','Arun Patel','Deepa Thomas','Kumar Babu','Lakshmi Rao',
-  'Ganesh Mohan','Anitha Siva','Raja Pandian','Divya Kumar','Sathish N',
-  'Bhanu Teja','Chitra A','Prabhu L','Rekha V','Muthu S',
-  'Valli R','Karthik P','Sujatha M','Balaji N','Pooja R'
-];
-
-// ═══════════════════════════════════════════════════════════
-// FORMULA — NEW CALCULATION LOGIC
-// ═══════════════════════════════════════════════════════════
-// For a 10000 chit with 10 members, starting at 1200:
-//
-// Month 1: 1200 × 10 = 12000 → profit 2000
-// Month 2: 1150 × 9 + 1200 × 1 = 11550 → profit 1550
-// Month 3: 1100 × 8 + 1200 × 2 = 11200 → profit 1200
-// ...
-// Month 10: 750 × 1 + 1200 × 9 = 11550 → profit 1550
-//
-// Formula:
-//   fixedRate = ChitVal × 1.2 / Members (what lifted members pay)
-//   startAmt = fixedRate (Month 1 rate for not-yet-lifted)
-//   step = decrease per month
-//   notLiftRate(m) = startAmt - (m-1) × step (decreasing)
-//
-// Pool(m) = (nMem - (m-1)) × notLiftRate(m) + (m-1) × fixedRate
-//         = remaining × currentRate + alreadyLifted × fixedRate
-
-function roundClean(n) {
-  if(n <= 0) return 1;
-  const exp = Math.floor(Math.log10(n));
-  const fraction = n / Math.pow(10, exp);
-  let nice;
-  if(fraction < 1.5) nice = 1;
-  else if(fraction < 3.5) nice = 2;
-  else if(fraction < 7.5) nice = 5;
-  else nice = 10;
-  return nice * Math.pow(10, exp);
-}
-
-function computeParams(chitVal, nMem, nMon) {
-  const fixedRate = Math.round(chitVal * 1.2 / nMem);
-  const startAmt  = fixedRate;
-  const rawStep   = startAmt / (2*(nMon-1));
-  const step      = roundClean(rawStep) || 1;
-  return {fixedRate, startAmt, step};
-}
-
-// Get the "not yet lifted" rate for a given month
-function notLiftRate(month, overrides) {
-  if(overrides[month-1] !== null && overrides[month-1] !== undefined) return overrides[month-1];
-  return Math.max(0, S.startAmt - (month-1)*S.step);
-}
-
-// Get the fixed rate for already-lifted members for a given month
-function fixedRateVal(month, overrides) {
-  if(overrides[month-1] !== null && overrides[month-1] !== undefined) return overrides[month-1];
-  return S.fixedRate;
-}
-
-// Pool collected in month m using NEW formula:
-// Pool = (remaining members including lifter) × currentRate + (already lifted) × fixedRate
-function poolForMonth(m) {
-  const alreadyLifted = m - 1;                    // members who lifted in months 1..(m-1)
-  const remaining     = S.nMem - alreadyLifted;   // members not yet lifted (includes this month's lifter)
-  const currentRate   = notLiftRate(m, S.manualNotLift);
-  const fRate         = fixedRateVal(m, S.manualFixed);
-  return remaining * currentRate + alreadyLifted * fRate;
-}
-
-function getCalMonths() {
-  const start = document.getElementById('cfgStartMonth').value;
-  const [mn, yr] = start.split(' ');
-  let mi = MONTH_NAMES.indexOf(mn.slice(0,3));
-  if(mi<0) mi=0;
-  let y = parseInt(yr)||2025;
-  const arr=[];
-  for(let i=0;i<S.nMon;i++){
-    arr.push(MONTH_NAMES[mi%12]+' '+y);
-    mi++;
-    if(mi%12===0 && i<S.nMon-1) y++;
-  }
-  return arr;
-}
-
-// ═══════════════════════════════════════════════════════════
-// INIT / CONFIG CHANGE
-// ═══════════════════════════════════════════════════════════
-function onCfgChange(){
-  const cv=parseInt(document.getElementById('cfgVal').value)||10000;
-  const nm=parseInt(document.getElementById('cfgMem').value)||10;
-  const mon=parseInt(document.getElementById('cfgMon').value)||10;
-  const {fixedRate,startAmt,step}=computeParams(cv,nm,mon);
-  document.getElementById('fbar').innerHTML=fbarHTML(cv,nm,mon,fixedRate,startAmt,step);
-}
-
-function fbarHTML(cv,nm,mon,fixedRate,startAmt,step){
-  const last=Math.max(0,startAmt-(mon-1)*step);
-  const pool1 = nm * startAmt; // Month 1: all members pay startAmt
-  const poolLast = 1*last + (mon-1)*fixedRate; // Last month
-  return `
-    <div class="fi"><div class="fi-l">Chit Value</div><div class="fi-v">${fmt(cv)}</div><div class="fi-s">${nm} members × ${mon} months</div></div>
-    <div class="fi"><div class="fi-l">Fixed Rate (Lifted)</div><div class="fi-v">${fmt(fixedRate)}</div><div class="fi-s">= ChitVal×1.2÷Members</div></div>
-    <div class="fi"><div class="fi-l">Month 1 Rate</div><div class="fi-v">${fmt(startAmt)}</div><div class="fi-s">Starting contribution</div></div>
-    <div class="fi"><div class="fi-l">Monthly Drop</div><div class="fi-v">−${fmt(step)}</div><div class="fi-s">Per month reduction</div></div>
-    <div class="fi"><div class="fi-l">Month ${mon} Rate</div><div class="fi-v">${fmt(last)}</div><div class="fi-s">Lowest contribution</div></div>
-    <div class="fi"><div class="fi-l">Pool — Month 1</div><div class="fi-v">${fmt(pool1)}</div><div class="fi-s">${nm} × ${fmtN(startAmt)}</div></div>
-  `;
-}
-
-// ═══════════════════════════════════════════════════════════
-// MAIN BUILD
-// ═══════════════════════════════════════════════════════════
-function build() {
-  S.chitVal = parseInt(document.getElementById('cfgVal').value)||10000;
-  S.nMem    = parseInt(document.getElementById('cfgMem').value)||10;
-  S.nMon    = parseInt(document.getElementById('cfgMon').value)||10;
-
-  const p = computeParams(S.chitVal, S.nMem, S.nMon);
-  S.fixedRate = p.fixedRate;
-  S.startAmt  = p.startAmt;
-  S.step      = p.step;
-
-  // Init manual overrides if needed
-  if(S.manualNotLift.length !== S.nMon) S.manualNotLift = Array(S.nMon).fill(null);
-  if(S.manualFixed.length   !== S.nMon) S.manualFixed   = Array(S.nMon).fill(null);
-
-  // Init members if needed
-  if(S.members.length !== S.nMem){
-    S.members = Array.from({length:S.nMem},(_,i)=>({
-      name: BASE_NAMES[i]||`Member ${i+1}`,
-      phone: '',
-      liftMonth: i+1 <= S.nMon ? i+1 : 1
-    }));
-  }
-
-  S.calMonths = getCalMonths();
-
-  // Update pills
-  document.getElementById('pillChit').textContent = fmt(S.chitVal)+' CHIT';
-  document.getElementById('pillMem').textContent  = S.nMem+' MEMBERS';
-  document.getElementById('pillMon').textContent  = S.nMon+' MONTHS';
-
-  // Formula bar
-  document.getElementById('fbar').innerHTML = fbarHTML(S.chitVal,S.nMem,S.nMon,S.fixedRate,S.startAmt,S.step);
-
-  buildContribTab();
-  buildScheduleTab();
-  buildMembersTab();
-  buildSummaryTab();
-  updateProfitBanner();
-}
-
-// ═══════════════════════════════════════════════════════════
-// PROFIT BANNER
-// ═══════════════════════════════════════════════════════════
-function updateProfitBanner(){
-  let grand=0;
-  for(let m=1;m<=S.nMon;m++) grand+=poolForMonth(m);
-  const paidOut=S.nMon*S.chitVal;
-  const profit=grand-paidOut;
-  document.getElementById('pbCollected').textContent=fmt(grand);
-  document.getElementById('pbPaid').textContent=fmt(paidOut);
-  document.getElementById('pbProfit').textContent=fmt(profit);
-  document.getElementById('pbProfit').style.color=profit>=0?'#FFE000':'#FF8888';
-  document.getElementById('pbPPM').textContent=fmt(Math.round(profit/S.nMon));
-  // summary tab
-  document.getElementById('sumCV').textContent=fmt(S.chitVal);
-  document.getElementById('sumMem').textContent=S.nMem;
-  document.getElementById('sumCol').textContent=fmt(grand);
-  document.getElementById('sumProfit').textContent=fmt(profit);
-}
-
-// ═══════════════════════════════════════════════════════════
-// CONTRIBUTION TAB — UPDATED LOGIC
-// ═══════════════════════════════════════════════════════════
-function buildContribTab(){
-  const tb=document.getElementById('contribBody');
-  tb.innerHTML='';
-  let grandPool=0, grandGain=0;
-
-  for(let m=1;m<=S.nMon;m++){
-    const alreadyLifted = m - 1;
-    const remaining     = S.nMem - alreadyLifted;
-    const nlRate        = notLiftRate(m, S.manualNotLift);
-    const fRate         = fixedRateVal(m, S.manualFixed);
-    const pool          = remaining * nlRate + alreadyLifted * fRate;
-    const gain          = pool - S.chitVal;
-    grandPool+=pool; grandGain+=gain;
-
-    const nlManual = S.manualNotLift[m-1]!==null;
-    const fManual  = S.manualFixed[m-1]!==null;
-
-    const tr=document.createElement('tr');
-    tr.className=m%2===0?'ev':'od';
-    tr.innerHTML=`
-      <td>
-        <span class="mnum">${m}</span><br>
-        <small style="font-size:10px;color:#666">${S.calMonths[m-1]||''}</small><br>
-        <small style="font-size:9px;color:#999">${remaining} unlift + ${alreadyLifted} lifted</small>
-      </td>
-      <td>
-        <input type="number" class="adj-inp ${nlManual?'manual':'auto'}" id="nl${m}" value="${nlRate}"
-          onchange="manualChange('nl',${m},this)" onblur="manualChange('nl',${m},this)">
-        <small style="font-size:9px;color:#666">× ${remaining} members</small>
-      </td>
-      <td>
-        <input type="number" class="adj-inp ${fManual?'manual':'auto'}" id="fx${m}" value="${fRate}"
-          onchange="manualChange('fx',${m},this)" onblur="manualChange('fx',${m},this)">
-        <small style="font-size:9px;color:#666">× ${alreadyLifted} members</small>
-      </td>
-      <td class="mono cn"><strong>${fmtN(pool)}</strong></td>
-      <td class="mono">${fmtN(S.chitVal)}</td>
-      <td class="mono ${gain>=0?'cg':'cr'}">${gain>=0?'+':''}${fmtN(gain)}</td>
-    `;
-    tb.appendChild(tr);
-  }
-
-  const gGain=grandPool-S.nMon*S.chitVal;
-  document.getElementById('contribFoot').innerHTML=`
-    <tr class="tot-r">
-      <td>TOTAL</td>
-      <td colspan="2">—</td>
-      <td>${fmt(grandPool)}</td>
-      <td>${fmt(S.nMon*S.chitVal)}</td>
-      <td>${fmt(gGain)}</td>
-    </tr>`;
-}
-
-function manualChange(type, month, el){
-  const val = parseFloat(el.value);
-  if(type==='nl'){
-    S.manualNotLift[month-1] = isNaN(val)?null:val;
-    el.className='adj-inp '+(S.manualNotLift[month-1]!==null?'manual':'auto');
-  } else {
-    S.manualFixed[month-1] = isNaN(val)?null:val;
-    el.className='adj-inp '+(S.manualFixed[month-1]!==null?'manual':'auto');
-  }
-  buildContribTab();
-  buildScheduleTab();
-  buildSummaryTab();
-  updateProfitBanner();
-}
-
-function resetAllManual(){
-  S.manualNotLift=Array(S.nMon).fill(null);
-  S.manualFixed=Array(S.nMon).fill(null);
-  buildContribTab();
-  buildScheduleTab();
-  buildSummaryTab();
-  updateProfitBanner();
-}
-
-// ═══════════════════════════════════════════════════════════
-// SCHEDULE TAB
-// ═══════════════════════════════════════════════════════════
-function buildScheduleTab(){
-  const tb=document.getElementById('schedBody');
-  tb.innerHTML='';
-  let cumProfit=0, grandPool=0, grandPaid=0;
-
-  for(let m=1;m<=S.nMon;m++){
-    const pool=poolForMonth(m);
-    const gain=pool-S.chitVal;
-    cumProfit+=gain;
-    grandPool+=pool; grandPaid+=S.chitVal;
-
-    // Find who lifts this month
-    const lifter=S.members.find(mem=>mem.liftMonth===m);
-    const lifterName=lifter?lifter.name:'<span class="chip chip-r">UNASSIGNED</span>';
-
-    const tr=document.createElement('tr');
-    tr.className=m%2===0?'ev':'od';
-    tr.innerHTML=`
-      <td><span class="mnum">${m}</span></td>
-      <td style="font-weight:700;font-size:12px">${S.calMonths[m-1]||''}</td>
-      <td style="font-weight:800;font-size:12px">${lifterName}${lifter?'<br><span class="chip chip-n">LIFTS</span>':''}</td>
-      <td class="mono cn"><strong>${fmtN(pool)}</strong></td>
-      <td class="mono cr">${fmtN(S.chitVal)}</td>
-      <td class="mono ${gain>=0?'cg':'cr'}">${gain>=0?'+':''}${fmtN(gain)}</td>
-      <td class="mono ${cumProfit>=0?'cg':'cr'}"><strong>${fmtN(cumProfit)}</strong></td>
-    `;
-    tb.appendChild(tr);
-  }
-
-  const gProfit=grandPool-grandPaid;
-  document.getElementById('schedFoot').innerHTML=`
-    <tr class="tot-r">
-      <td colspan="3">TOTAL</td>
-      <td>${fmt(grandPool)}</td>
-      <td>${fmt(grandPaid)}</td>
-      <td>${fmt(gProfit)}</td>
-      <td>${fmt(gProfit)}</td>
-    </tr>`;
-}
-
-// ═══════════════════════════════════════════════════════════
-// MEMBERS TAB — UPDATED FOR NEW CALCULATION
-// ═══════════════════════════════════════════════════════════
-function memberTotalContribution(liftMonth) {
-  // Member pays:
-  //   - Months before lift (1..liftMonth): notLiftRate for each month
-  //   - Months after lift (liftMonth+1..nMon): fixedRate for each month
-  let total = 0;
-  for(let m=1; m<=S.nMon; m++){
-    if(m <= liftMonth){
-      // Not yet lifted (including the month they lift)
-      total += notLiftRate(m, S.manualNotLift);
-    } else {
-      // Already lifted — pay fixed rate
-      total += fixedRateVal(m, S.manualFixed);
-    }
-  }
-  return total;
-}
-
-function buildMembersTab(){
-  const tb=document.getElementById('memBody');
-  tb.innerHTML='';
-
-  for(let i=0;i<S.nMem;i++){
-    const mem=S.members[i];
-    const total = memberTotalContribution(mem.liftMonth);
-    const net = S.chitVal - total;
-
-    const monthOpts=Array.from({length:S.nMon},(_,mi)=>{
-      const taken=S.members.findIndex((mm,ii)=>ii!==i&&mm.liftMonth===mi+1)>=0;
-      return `<option value="${mi+1}" ${mem.liftMonth===mi+1?'selected':''}>${S.calMonths[mi]||'M'+(mi+1)}${taken?' (taken)':''}</option>`;
-    }).join('');
-
-    const tr=document.createElement('tr');
-    tr.className=i%2===0?'ev':'od';
-    tr.innerHTML=`
-      <td class="mnum">${i+1}</td>
-      <td><input type="text" value="${mem.name}" onchange="S.members[${i}].name=this.value;buildScheduleTab();buildSummaryTab()" style="min-width:130px"></td>
-      <td><input type="text" value="${mem.phone}" onchange="S.members[${i}].phone=this.value" placeholder="Phone no." style="min-width:110px"></td>
-      <td>
-        <select onchange="S.members[${i}].liftMonth=parseInt(this.value);buildScheduleTab();buildMembersTab();buildSummaryTab()">
-          ${monthOpts}
-        </select>
-      </td>
-      <td class="mono cr">${fmtN(total)}</td>
-      <td class="mono cg">${fmtN(S.chitVal)}</td>
-      <td class="mono ${net>=0?'cg':'cr'}">${net>=0?'+':''}${fmtN(net)}</td>
-    `;
-    tb.appendChild(tr);
-  }
-}
-
-// ═══════════════════════════════════════════════════════════
-// SUMMARY TAB — UPDATED FOR NEW CALCULATION
-// ═══════════════════════════════════════════════════════════
-function buildSummaryTab(){
-  const tb=document.getElementById('sumBody');
-  tb.innerHTML='';
-
-  for(let i=0;i<S.nMem;i++){
-    const mem=S.members[i];
-    const total = memberTotalContribution(mem.liftMonth);
-    const m1Total = memberTotalContribution(1); // what they'd pay if lifted M1
-
-    const net = S.chitVal - total;
-    const savings = m1Total - total;
-
-    const tr=document.createElement('tr');
-    tr.className=i%2===0?'ev':'od';
-    tr.innerHTML=`
-      <td class="mnum">${i+1}</td>
-      <td style="font-weight:800;font-size:12px">${mem.name}</td>
-      <td><span class="chip chip-n">M${mem.liftMonth} — ${S.calMonths[mem.liftMonth-1]||''}</span></td>
-      <td class="mono cr">${fmtN(total)}</td>
-      <td class="mono cg">${fmtN(S.chitVal)}</td>
-      <td class="mono ${net>=0?'cg':'cr'}" style="font-size:13px">${net>=0?'+':''}${fmtN(net)}</td>
-      <td class="mono co">${fmtN(total)}</td>
-      <td class="mono ${savings>=0?'cg':'cr'}">${savings>=0?'+':''}${fmtN(savings)}</td>
-    `;
-    tb.appendChild(tr);
-  }
-}
-
-// ═══════════════════════════════════════════════════════════
-// CHIT BUILDER
-// ═══════════════════════════════════════════════════════════
-let CB = {
-  columns: [
-    {id:'month', name:'Month', type:'core', removable:false},
-    {id:'contrib_notlift', name:'If Not Lifted', type:'core', removable:false, group:'Monthly Contribution'},
-    {id:'contrib_lifted', name:'If Lifted', type:'core', removable:false, group:'Monthly Contribution'},
-    {id:'payment', name:'Payment per Month', type:'core', removable:false}
-  ],
-  rows: 10,
-  data: {} // data[rowIdx][colId] = value
-};
-
-function cbInit() {
-  CB.data = {};
-  for(let r=0; r<CB.rows; r++){
-    CB.data[r] = {};
-    CB.data[r]['month'] = r+1;
-  }
-  cbRender();
-}
-
-function cbRender() {
-  const thead = document.getElementById('cbThead');
-  const tbody = document.getElementById('cbTbody');
-  thead.innerHTML = '';
-  tbody.innerHTML = '';
-
-  // Determine grouped columns and build header rows
-  // Row 1: Group headers (with colspan for grouped columns)
-  // Row 2: Individual column headers
-  const groups = [];
-  let i = 0;
-  while(i < CB.columns.length) {
-    const col = CB.columns[i];
-    if(col.group) {
-      // Find all consecutive columns with same group
-      let count = 0;
-      const groupName = col.group;
-      let j = i;
-      while(j < CB.columns.length && CB.columns[j].group === groupName) {
-        count++;
-        j++;
-      }
-      groups.push({name: groupName, span: count, startIdx: i});
-      i = j;
-    } else {
-      groups.push({name: col.name, span: 1, startIdx: i, single: true});
-      i++;
-    }
-  }
-
-  // Header row 1 (groups)
-  const tr1 = document.createElement('tr');
-  groups.forEach(g => {
-    const th = document.createElement('th');
-    th.className = g.single ? 'th-gd' : 'th-nv';
-    th.colSpan = g.span;
-    if(g.single) {
-      th.rowSpan = 2;
-    }
-    th.textContent = g.name;
-    tr1.appendChild(th);
-  });
-  thead.appendChild(tr1);
-
-  // Header row 2 (sub-columns for groups)
-  const hasSubHeaders = groups.some(g => !g.single);
-  if(hasSubHeaders) {
-    const tr2 = document.createElement('tr');
-    tr2.className = 'cb-sub-header';
-    groups.forEach(g => {
-      if(!g.single) {
-        for(let k = g.startIdx; k < g.startIdx + g.span; k++) {
-          const col = CB.columns[k];
-          const th = document.createElement('th');
-          th.style.position = 'relative';
-          if(col.removable) {
-            th.innerHTML = `${col.name} <button class="cb-col-remove" onclick="cbRemoveColumnById('${col.id}')" title="Remove column">×</button>`;
-          } else {
-            th.textContent = col.name;
-          }
-          tr2.appendChild(th);
-        }
-      }
-    });
-    thead.appendChild(tr2);
-  }
-
-  // Add remove buttons to non-grouped removable columns in header row 1
-  let thIdx = 0;
-  groups.forEach(g => {
-    if(g.single) {
-      const col = CB.columns[g.startIdx];
-      const th = tr1.children[thIdx];
-      if(col.removable) {
-        th.style.position = 'relative';
-        th.innerHTML = `${col.name} <button class="cb-col-remove" onclick="cbRemoveColumnById('${col.id}')" title="Remove column">×</button>`;
-      }
-    }
-    thIdx++;
-  });
-
-  // Body rows
-  for(let r=0; r<CB.rows; r++) {
-    const tr = document.createElement('tr');
-    tr.className = r%2===0 ? 'ev' : 'od';
-
-    CB.columns.forEach(col => {
-      const td = document.createElement('td');
-      const inp = document.createElement('input');
-      inp.type = 'text';
-      inp.className = 'cb-input';
-      inp.value = CB.data[r] && CB.data[r][col.id] !== undefined ? CB.data[r][col.id] : '';
-      inp.placeholder = col.id === 'month' ? (r+1).toString() : '—';
-      inp.dataset.row = r;
-      inp.dataset.col = col.id;
-      inp.addEventListener('input', function(){
-        if(!CB.data[this.dataset.row]) CB.data[this.dataset.row] = {};
-        CB.data[this.dataset.row][this.dataset.col] = this.value;
-      });
-      td.appendChild(inp);
-      tr.appendChild(td);
-    });
-
-    // Remove row button
-    const tdAction = document.createElement('td');
-    tdAction.style.border = 'none';
-    tdAction.style.background = 'transparent';
-    tdAction.style.padding = '2px';
-    const removeBtn = document.createElement('button');
-    removeBtn.className = 'cb-row-remove';
-    removeBtn.textContent = '×';
-    removeBtn.title = 'Remove this row';
-    removeBtn.onclick = function(){ cbRemoveRowAt(r); };
-    tdAction.appendChild(removeBtn);
-    tr.appendChild(tdAction);
-
-    tbody.appendChild(tr);
-  }
-}
-
-function cbAddRow() {
-  const r = CB.rows;
-  CB.data[r] = {};
-  CB.data[r]['month'] = r+1;
-  CB.rows++;
-  cbRender();
-}
-
-function cbRemoveRow() {
-  if(CB.rows <= 1) return;
-  CB.rows--;
-  delete CB.data[CB.rows];
-  cbRender();
-}
-
-function cbRemoveRowAt(idx) {
-  if(CB.rows <= 1) return;
-  // Shift data down
-  for(let r=idx; r<CB.rows-1; r++){
-    CB.data[r] = CB.data[r+1] || {};
-  }
-  delete CB.data[CB.rows-1];
-  CB.rows--;
-  cbRender();
-}
-
-function cbSetRows() {
-  const num = prompt('Enter the number of rows:', CB.rows);
-  if(num === null) return;
-  const n = parseInt(num);
-  if(isNaN(n) || n < 1 || n > 200) { alert('Please enter a valid number (1-200)'); return; }
-  // Add or remove rows
-  if(n > CB.rows) {
-    for(let r=CB.rows; r<n; r++){
-      CB.data[r] = {};
-      CB.data[r]['month'] = r+1;
-    }
-  } else {
-    for(let r=n; r<CB.rows; r++){
-      delete CB.data[r];
-    }
-  }
-  CB.rows = n;
-  cbRender();
-}
-
-function cbAddColumn() {
-  const name = prompt('Enter column name:');
-  if(!name || !name.trim()) return;
-
-  // Ask if it should be part of an existing group or standalone
-  const groupOptions = [...new Set(CB.columns.filter(c=>c.group).map(c=>c.group))];
-  let group = null;
-
-  if(groupOptions.length > 0) {
-    const choice = prompt(
-      'Add to an existing group? Enter group name or leave blank for standalone.\n\nExisting groups: ' +
-      groupOptions.join(', ')
-    );
-    if(choice && groupOptions.includes(choice.trim())) {
-      group = choice.trim();
-    }
-  }
-
-  const id = 'custom_' + Date.now() + '_' + Math.random().toString(36).substr(2,4);
-  const newCol = {id, name: name.trim(), type:'custom', removable:true};
-  if(group) newCol.group = group;
-
-  // If grouped, insert after the last column of that group
-  if(group) {
-    let lastIdx = -1;
-    CB.columns.forEach((c,i) => { if(c.group === group) lastIdx = i; });
-    if(lastIdx >= 0) {
-      CB.columns.splice(lastIdx+1, 0, newCol);
-    } else {
-      CB.columns.push(newCol);
-    }
-  } else {
-    CB.columns.push(newCol);
-  }
-
-  cbRender();
-}
-
-function cbRemoveColumn() {
-  const removable = CB.columns.filter(c => c.removable);
-  if(removable.length === 0) { alert('No custom columns to remove. Core columns cannot be removed.'); return; }
-
-  const names = removable.map(c => c.name);
-  const choice = prompt('Enter the name of the column to remove:\n\nRemovable columns: ' + names.join(', '));
-  if(!choice) return;
-
-  const col = removable.find(c => c.name.toLowerCase() === choice.trim().toLowerCase());
-  if(!col) { alert('Column not found: ' + choice); return; }
-  cbRemoveColumnById(col.id);
-}
-
-function cbRemoveColumnById(id) {
-  const idx = CB.columns.findIndex(c => c.id === id);
-  if(idx < 0) return;
-  if(!CB.columns[idx].removable) { alert('Core columns cannot be removed.'); return; }
-  // Remove data for this column
-  for(let r=0; r<CB.rows; r++){
-    if(CB.data[r]) delete CB.data[r][id];
-  }
-  CB.columns.splice(idx, 1);
-  cbRender();
-}
-
-function cbClearAll() {
-  if(!confirm('Clear all data in the Chit Builder? This cannot be undone.')) return;
-  CB.data = {};
-  for(let r=0; r<CB.rows; r++){
-    CB.data[r] = {};
-    CB.data[r]['month'] = r+1;
-  }
-  cbRender();
-}
-
-// ═══════════════════════════════════════════════════════════
-// CHIT BUILDER — JPEG DOWNLOAD (HIGH RESOLUTION)
-// ═══════════════════════════════════════════════════════════
-let cbImageDataUrl = null;
-
-function restoreTableAfterCapture(inputs, inputData, removeButtons, colRemoveButtons, rows) {
-  inputs.forEach((inp, i) => {
-    inp.style.display = inputData[i].display || '';
-    const span = inp.parentNode.querySelector('.cb-capture-span');
-    if(span) span.remove();
-  });
-  removeButtons.forEach(b => b.style.display = '');
-  colRemoveButtons.forEach(b => b.style.display = '');
-  rows.forEach(tr => {
-    const lastTd = tr.lastElementChild;
-    if(lastTd && lastTd.querySelector('.cb-row-remove')) {
-      lastTd.style.display = '';
-    }
-  });
-}
-
-function renderTableToCanvas(tableWrap) {
-  // Pure canvas-based table rendering (no html2canvas needed)
-  // This avoids cross-origin iframe issues that html2canvas has with file:// protocol
-  const table = tableWrap.querySelector('table');
-  if(!table) return null;
-
-  const scale = 2; // High-res multiplier
-  const cellPadX = 14;
-  const cellPadY = 10;
-  const fontSize = 13;
-  const headerFontSize = 14;
-  const font = fontSize + 'px sans-serif';
-  const headerFont = 'bold ' + headerFontSize + 'px sans-serif';
-  const borderColor = '#ccc';
-
-  // Measure text helper
-  const measureCanvas = document.createElement('canvas');
-  const measureCtx = measureCanvas.getContext('2d');
-
-  function measureText(text, f) {
-    measureCtx.font = f || font;
-    return measureCtx.measureText(text).width;
-  }
-
-  // Extract table data
-  const headerRows = [];
-  const theadEl = table.querySelector('thead');
-  if(theadEl) {
-    theadEl.querySelectorAll('tr').forEach(tr => {
-      const cells = [];
-      tr.querySelectorAll('th').forEach(th => {
-        cells.push({
-          text: th.textContent.trim(),
-          colspan: th.colSpan || 1,
-          rowspan: th.rowSpan || 1,
-          bg: getComputedStyle(th).backgroundColor,
-          color: getComputedStyle(th).color
-        });
-      });
-      headerRows.push(cells);
-    });
-  }
-
-  const bodyRows = [];
-  const tbodyEl = table.querySelector('tbody');
-  if(tbodyEl) {
-    tbodyEl.querySelectorAll('tr').forEach(tr => {
-      const cells = [];
-      const tds = tr.querySelectorAll('td');
-      // Skip the last td if it contains a remove button
-      tds.forEach((td, idx) => {
-        if(td.querySelector('.cb-row-remove')) return; // Skip action column
-        const input = td.querySelector('.cb-input');
-        const text = input ? (input.value || input.placeholder || '—') : td.textContent.trim();
-        cells.push({
-          text: text,
-          bg: getComputedStyle(td).backgroundColor,
-          color: input && input.value ? '#111' : (input ? '#999' : getComputedStyle(td).color)
-        });
-      });
-      bodyRows.push(cells);
-    });
-  }
-
-  if(bodyRows.length === 0) return null;
-
-  // Determine number of actual data columns (from body rows)
-  const numCols = bodyRows.length > 0 ? bodyRows[0].length : 0;
-  if(numCols === 0) return null;
-
-  // Calculate column widths
-  const colWidths = Array(numCols).fill(60);
-  // Check header widths (use first header row, accounting for colspan)
-  headerRows.forEach(row => {
-    let colIdx = 0;
-    row.forEach(cell => {
-      const w = measureText(cell.text, headerFont) + cellPadX * 2;
-      const perCol = w / cell.colspan;
-      for(let c = colIdx; c < colIdx + cell.colspan && c < numCols; c++) {
-        colWidths[c] = Math.max(colWidths[c], perCol);
-      }
-      colIdx += cell.colspan;
-    });
-  });
-  // Check body widths
-  bodyRows.forEach(row => {
-    row.forEach((cell, c) => {
-      if(c < numCols) {
-        const w = measureText(cell.text, font) + cellPadX * 2;
-        colWidths[c] = Math.max(colWidths[c], w);
-      }
-    });
-  });
-
-  const rowHeight = fontSize + cellPadY * 2;
-  const headerRowHeight = headerFontSize + cellPadY * 2;
-  const totalWidth = colWidths.reduce((a,b) => a+b, 0);
-  const totalHeight = headerRows.length * headerRowHeight + bodyRows.length * rowHeight;
-
-  // Create canvas
-  const canvas = document.createElement('canvas');
-  canvas.width = Math.ceil(totalWidth * scale);
-  canvas.height = Math.ceil(totalHeight * scale);
-  const ctx = canvas.getContext('2d');
-  ctx.scale(scale, scale);
-
-  // Fill background
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, totalWidth, totalHeight);
-
-  // Draw header rows
-  let y = 0;
-  headerRows.forEach(row => {
-    let x = 0;
-    let colIdx = 0;
-    row.forEach(cell => {
-      // Calculate cell width based on colspan
-      let cellW = 0;
-      for(let c = colIdx; c < colIdx + cell.colspan && c < numCols; c++) {
-        cellW += colWidths[c];
-      }
-      // Calculate cell height based on rowspan
-      const cellH = cell.rowspan * headerRowHeight;
-
-      // Background
-      ctx.fillStyle = cell.bg || '#1B4332';
-      ctx.fillRect(x, y, cellW, cellH);
-
-      // Border
-      ctx.strokeStyle = borderColor;
-      ctx.lineWidth = 0.5;
-      ctx.strokeRect(x, y, cellW, cellH);
-
-      // Text
-      ctx.fillStyle = cell.color || '#F5C800';
-      ctx.font = headerFont;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(cell.text, x + cellW/2, y + headerRowHeight/2, cellW - cellPadX);
-
-      x += cellW;
-      colIdx += cell.colspan;
-    });
-    y += headerRowHeight;
-  });
-
-  // Draw body rows
-  bodyRows.forEach(row => {
-    let x = 0;
-    row.forEach((cell, c) => {
-      if(c >= numCols) return;
-      const cellW = colWidths[c];
-
-      // Background
-      ctx.fillStyle = cell.bg || '#fff';
-      ctx.fillRect(x, y, cellW, rowHeight);
-
-      // Border
-      ctx.strokeStyle = borderColor;
-      ctx.lineWidth = 0.5;
-      ctx.strokeRect(x, y, cellW, rowHeight);
-
-      // Text
-      ctx.fillStyle = cell.color || '#111';
-      ctx.font = font;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(cell.text, x + cellW/2, y + rowHeight/2, cellW - cellPadX);
-
-      x += cellW;
-    });
-    y += rowHeight;
-  });
-
-  return canvas;
-}
-
-function downloadBuilderImage() {
-  const tableWrap = document.getElementById('cbTableWrap');
-  if(!tableWrap) return;
-
-  // Try html2canvas first, fall back to manual canvas rendering
-  var useManualCanvas = false;
-
-  // Check if we're on file:// protocol or in an iframe context that blocks html2canvas
-  if(window.location.protocol === 'file:' || window.location.origin === 'null') {
-    useManualCanvas = true;
-  }
-
-  if(!useManualCanvas && typeof html2canvas !== 'undefined') {
-    // Temporarily remove input styling for clean capture
-    const inputs = tableWrap.querySelectorAll('.cb-input');
-    const removeButtons = tableWrap.querySelectorAll('.cb-row-remove');
-    const colRemoveButtons = tableWrap.querySelectorAll('.cb-col-remove');
-
-    removeButtons.forEach(b => b.style.display = 'none');
-    colRemoveButtons.forEach(b => b.style.display = 'none');
-
-    const inputData = [];
-    inputs.forEach(inp => {
-      inputData.push({el: inp, display: inp.style.display});
-      const span = document.createElement('span');
-      span.textContent = inp.value || inp.placeholder || '—';
-      span.style.fontFamily = "'JetBrains Mono', monospace";
-      span.style.fontSize = '13px';
-      span.style.fontWeight = '600';
-      span.style.color = inp.value ? '#111' : '#999';
-      span.className = 'cb-capture-span';
-      inp.parentNode.insertBefore(span, inp);
-      inp.style.display = 'none';
-    });
-
-    const rows = tableWrap.querySelectorAll('tbody tr');
-    rows.forEach(tr => {
-      const lastTd = tr.lastElementChild;
-      if(lastTd && lastTd.querySelector('.cb-row-remove')) {
-        lastTd.style.display = 'none';
-      }
-    });
-
-    try {
-      html2canvas(tableWrap, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        allowTaint: true,
-        foreignObjectRendering: false
-      }).then(function(canvas) {
-        restoreTableAfterCapture(inputs, inputData, removeButtons, colRemoveButtons, rows);
-        try {
-          cbImageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
-          document.getElementById('cbPreviewImg').src = cbImageDataUrl;
-          document.getElementById('cbPreviewOverlay').classList.add('show');
-        } catch(e) {
-          console.error('toDataURL failed:', e);
-          // Fallback to manual canvas
-          manualCanvasCapture();
-        }
-      }).catch(function(err) {
-        console.error('html2canvas failed, using fallback:', err);
-        restoreTableAfterCapture(inputs, inputData, removeButtons, colRemoveButtons, rows);
-        // Fallback to manual canvas
-        manualCanvasCapture();
-      });
-    } catch(e) {
-      console.error('html2canvas error, using fallback:', e);
-      restoreTableAfterCapture(inputs, inputData, removeButtons, colRemoveButtons, rows);
-      manualCanvasCapture();
-    }
-  } else {
-    // Use manual canvas rendering directly
-    manualCanvasCapture();
-  }
-}
-
-function manualCanvasCapture() {
-  const tableWrap = document.getElementById('cbTableWrap');
-  if(!tableWrap) return;
-
-  try {
-    const canvas = renderTableToCanvas(tableWrap);
-    if(!canvas) {
-      alert('No table data to capture.');
-      return;
-    }
-    cbImageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
-    document.getElementById('cbPreviewImg').src = cbImageDataUrl;
-    document.getElementById('cbPreviewOverlay').classList.add('show');
-  } catch(e) {
-    console.error('Manual canvas capture failed:', e);
-    alert('Failed to capture image: ' + (e.message || e));
-  }
-}
-
-function saveBuilderImage() {
-  if(!cbImageDataUrl) return;
-  const a = document.createElement('a');
-  a.href = cbImageDataUrl;
-  a.download = 'KumarChits_ChitBuilder.jpg';
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  closePreview();
-}
-
-function closePreview(e) {
-  if(e && e.target !== document.getElementById('cbPreviewOverlay')) return;
-  document.getElementById('cbPreviewOverlay').classList.remove('show');
-}
-
-// ═══════════════════════════════════════════════════════════
-// DOWNLOAD CSV
-// ═══════════════════════════════════════════════════════════
-function csvEscape(v){ return '"'+String(v).replace(/"/g,'""')+'"'; }
-function fmtN(n){ return Math.round(n).toLocaleString('en-IN'); }
-function fmt(n){ return '₹'+Math.round(n).toLocaleString('en-IN'); }
-
-function downloadCSV(type){
-  let rows=[], filename='';
-  const chitName=document.getElementById('cfgName').value||'Chit';
-
-  if(type==='contrib'||type==='all'){
-    filename='KumarChits_Contributions.csv';
-    rows.push(['KUMAR CHITS — CONTRIBUTION TABLE']);
-    rows.push([`Chit: ${chitName}`, `Value: ${fmt(S.chitVal)}`, `Members: ${S.nMem}`, `Months: ${S.nMon}`]);
-    rows.push([]);
-    rows.push(['Month','Calendar','Not Yet Lifted Rate (₹)','Already Lifted Rate (₹)','Remaining Members','Lifted Members','Pool Collected (₹)','Paid to Lifter (₹)','Organiser Gain (₹)']);
-    for(let m=1;m<=S.nMon;m++){
-      const alreadyLifted = m - 1;
-      const remaining = S.nMem - alreadyLifted;
-      const nl=notLiftRate(m,S.manualNotLift);
-      const fl=fixedRateVal(m,S.manualFixed);
-      const pool=remaining*nl + alreadyLifted*fl;
-      const gain=pool-S.chitVal;
-      rows.push([m, S.calMonths[m-1]||'', nl, fl, remaining, alreadyLifted, pool, S.chitVal, gain]);
-    }
-    let grandPool=0;
-    for(let m=1;m<=S.nMon;m++) grandPool+=poolForMonth(m);
-    rows.push(['TOTAL','','','','','',grandPool, S.nMon*S.chitVal, grandPool-S.nMon*S.chitVal]);
-    rows.push([]);
-  }
-
-  if(type==='schedule'||type==='all'){
-    if(type==='schedule') filename='KumarChits_Schedule.csv';
-    rows.push(['MONTH-BY-MONTH SCHEDULE']);
-    rows.push(['Month','Calendar','Member Lifting','Pool Collected (₹)','Paid Out (₹)','Organiser Gain (₹)','Cumulative Profit (₹)']);
-    let cum=0;
-    for(let m=1;m<=S.nMon;m++){
-      const pool=poolForMonth(m);
-      const gain=pool-S.chitVal; cum+=gain;
-      const lifter=S.members.find(mm=>mm.liftMonth===m);
-      rows.push([m, S.calMonths[m-1]||'', lifter?lifter.name:'UNASSIGNED', pool, S.chitVal, gain, cum]);
-    }
-    rows.push([]);
-  }
-
-  if(type==='members'||type==='all'){
-    if(type==='members') filename='KumarChits_Members.csv';
-    rows.push(['MEMBER DETAILS']);
-    rows.push(['#','Name','Phone','Lifts Month','Calendar Month','Total Paid (₹)','Received (₹)','Net (₹)']);
-    for(let i=0;i<S.nMem;i++){
-      const mem=S.members[i];
-      const total = memberTotalContribution(mem.liftMonth);
-      const net=S.chitVal-total;
-      rows.push([i+1, mem.name, mem.phone||'—', mem.liftMonth, S.calMonths[mem.liftMonth-1]||'', total, S.chitVal, net]);
-    }
-    rows.push([]);
-  }
-
-  if(type==='summary'||type==='all'){
-    if(type==='summary') filename='KumarChits_Summary.csv';
-    rows.push(['MEMBER-WISE SUMMARY']);
-    rows.push(['#','Member','Lifts Month','Total Paid (₹)','Received (₹)','Net Gain/Loss (₹)','Effective Cost (₹)','Savings vs M1 (₹)']);
-    for(let i=0;i<S.nMem;i++){
-      const mem=S.members[i];
-      const total = memberTotalContribution(mem.liftMonth);
-      const m1total = memberTotalContribution(1);
-      rows.push([i+1,mem.name,'M'+mem.liftMonth+' '+S.calMonths[mem.liftMonth-1],total,S.chitVal,S.chitVal-total,total,m1total-total]);
-    }
-    rows.push([]);
-    let gPool=0;
-    for(let m=1;m<=S.nMon;m++) gPool+=poolForMonth(m);
-    rows.push(['ORGANISER PROFIT','','',gPool, S.nMon*S.chitVal, gPool-S.nMon*S.chitVal,'','']);
-  }
-
-  if(type==='all') filename='KumarChits_CompleteReport.csv';
-
-  const csv = rows.map(r=>Array.isArray(r)?r.map(csvEscape).join(','):'').join('\n');
-  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=filename;
-  a.style.display='none';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(a.href);
-}
-
-// ═══════════════════════════════════════════════════════════
-// TABS
-// ═══════════════════════════════════════════════════════════
-function showTab(id, btn){
-  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  if(btn) btn.classList.add('active');
-}
-
-// ═══════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════
-build();
-onCfgChange();
-cbInit();
-</script>
+    <!-- MODAL: Add/Edit Member -->
+    <div id="memberModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-lg">
+            <div class="flex items-center justify-between mb-6">
+                <h3 id="memberModalTitle" class="text-xl font-bold text-gray-900">Add New Member</h3>
+                <button onclick="closeMemberModal()" class="p-2 rounded-lg hover:bg-gray-100 transition"><i class="fas fa-times text-gray-400"></i></button>
+            </div>
+            <form id="memberForm" onsubmit="handleMemberSubmit(event)" class="space-y-4">
+                <input type="hidden" id="memberEditId">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Member Name <span class="text-red-400">*</span></label>
+                    <input type="text" id="memberName" required placeholder="e.g., Rajesh Kumar" class="form-input">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number <span class="text-red-400">*</span></label>
+                    <input type="tel" id="memberPhone" required placeholder="e.g., 9876543210" class="form-input">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Select Chit <span class="text-red-400">*</span></label>
+                    <select id="memberChit" required class="form-input">
+                        <option value="">Choose a chit...</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Lift Month</label>
+                    <input type="number" id="memberLiftMonth" placeholder="Optional (e.g., 3)" min="1" class="form-input">
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="submit" class="btn-primary flex-1"><i class="fas fa-save mr-2"></i><span id="memberSubmitText">Add Member</span></button>
+                    <button type="button" onclick="closeMemberModal()" class="btn-secondary flex-1">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Confirm Delete -->
+    <div id="confirmModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-sm text-center">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
+                <i class="fas fa-exclamation-triangle text-red-500 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Confirm Delete</h3>
+            <p id="confirmMessage" class="text-gray-500 text-sm mb-6">Are you sure you want to delete this item? This action cannot be undone.</p>
+            <div class="flex gap-3">
+                <button id="confirmDeleteBtn" class="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600 transition">Delete</button>
+                <button onclick="closeConfirmModal()" class="flex-1 btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: View Members of a Chit -->
+    <div id="chitMembersModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-2xl">
+            <div class="flex items-center justify-between mb-6">
+                <h3 id="chitMembersTitle" class="text-xl font-bold text-gray-900">Members</h3>
+                <button onclick="closeChitMembersModal()" class="p-2 rounded-lg hover:bg-gray-100 transition"><i class="fas fa-times text-gray-400"></i></button>
+            </div>
+            <div id="chitMembersList" class="space-y-3 max-h-96 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-[100] space-y-3"></div>
+
+    <!-- Hidden Canvas Elements for Downloads -->
+    <div id="downloadCanvas" class="fixed -left-[9999px] top-0"></div>
+
+    <script src="app.js"></script>
 </body>
 </html>
